@@ -14,7 +14,7 @@ La aplicación será diseñada para acceder a ella desde entorno web en un orden
 
 **Cumplimiento de requisitos**
 1. **Herencia**: Se realizará sobre `Transaccion` y sus subtipos.
-2. **Relación One-To-Many**: Relación entre `Transaccion` y `Factura`, y entre `Factura` y `DatosDeFacturacion`.
+2. **Relación One-To-Many**: Relación entre `Transaccion` y `Factura`.
 3. **Método personalizado**: Cálculo de los impuestos asociados al precio final.
 4. **Listado**: Se mostrarán todas las facturas asociadas a unos datos de facturación concretos ([Figura 1](#figura-1)).
 5. **CRUD**: En la misma pantalla anterior se usarán los controles adecuados para hacer el CRUD. Se usará el formulario de la ([Figura 2](#figura-2)).
