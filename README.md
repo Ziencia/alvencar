@@ -30,16 +30,16 @@ La aplicación será diseñada para acceder a ella desde entorno web en un orden
 
 ### Figura 1
 
-![Figura 1](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250207_interfaz_listado.jpg)
+![Figura 1](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250207_interfaz_listado.png)
 
 ### Figura 2
 
-![Figura 2](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250702_interfaz_CRUD_alquiler1.jpg)
+![Figura 2](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250702_interfaz_CRUD_alquiler1.png)
 
 ### Figura 3
 
-![Figura 3](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250702_interfaz_CRUD_alquiler2.jpg)
+![Figura 3](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250702_interfaz_CRUD_alquiler2.png)
 
 ### Figura 4
 
-![Figura 4](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250702_interfaz_CRUD_venta.jpg)
+![Figura 4](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250702_interfaz_CRUD_venta.png)
