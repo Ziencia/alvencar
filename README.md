@@ -4,18 +4,18 @@ Aplicación para gestionar el alquiler y la venta de coches.
 
 ## Descripción
 
-La aplicación se encargará de la gestión de ventas y alquileres de una flota de vehículos. Almacenará datos de todos los vehículos y transacciones realizadas, así como datos de facturación de los clientes y facturas asociadas a estos datos de facturación.
+La aplicación se encargará de la gestión de ventas y alquileres de una flota de vehículos. Almacenará datos de todos los vehículos, ofertas y transacciones realizadas, así como datos de los clientes y facturas asociadas a estos clientes.
 
 La aplicación será diseñada para acceder a ella desde entorno web en un ordenador.
 
 ## Diagrama de clases de diseño
 
-![Diagrama de diseño MVP](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250207_diagrama_clases_alvencar.png)
+![Diagrama de diseño MVP](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250221_diagrama_clases_alvencar.png)
 
 ### Cumplimiento de requisitos
 
 1. **Herencia**: Se realizará sobre `Transaccion` y sus subtipos.
-2. **Relación One-To-Many**: Relación entre `Coche` y `Transaccion`.
+2. **Relación One-To-Many**: Relación entre `Coche` y `Oferta`.
 3. **Método personalizado**: Generación de la factura.
 4. **Listado**: Se mostrarán todos los alquileres asociados a un `Coche`. ([Figura 1](#figura-1)).
 5. **CRUD**: Se realizará CRUD tanto en la creación de un alquiler ([Figura 2](#figura-2)), en la introducción de los datos tras la devolución ([Figura 3](#figura-3)) y en la realización de una venta ([Figura 3](#figura-3)).
