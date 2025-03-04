@@ -14,11 +14,11 @@ La aplicación será diseñada para acceder a ella desde entorno web en un orden
 
 ### Cumplimiento de requisitos
 
-1. **Herencia**: Se realizará sobre `Oferta` y sus subtipos.
+1. **Herencia**: Se realizará sobre `Transaccion` y sus subtipos.
 2. **Relación One-To-Many**: Relación entre `Coche` y `Transaccion`.
 3. **Método personalizado**: Generación de la factura.
 4. **Listado**: Se mostrarán todas las transacciones asociadas a un `Coche`. ([Figura 1](#figura-1)).
-5. **CRUD**: Se realizará CRUD en la creación de una oferta ([Figura 2](#figura-2)).
+5. **CRUD**: Se realizará CRUD en la creación de las transacciones ([Figura 2](#figura-2)).
 6. **URLs** del proyecto:
    1. Repositorio proyecto: <https://git.institutomilitar.com/ManuelDeBlas/alvencar>
    2. Librería: <https://github.com/ManuelDeBlas/alvencar>
@@ -34,4 +34,4 @@ La aplicación será diseñada para acceder a ella desde entorno web en un orden
 
 ### Figura 2
 
-![Figura 2](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250227_interfaz_CRUD.png)
+![Figura 2](https://git.institutomilitar.com/ManuelDeBlas/alvencar/-/wikis/img/20250304_interfaz_2.png)
