@@ -1,0 +1,1 @@
+<template>Página para mostrar listado de transacciones</template>
