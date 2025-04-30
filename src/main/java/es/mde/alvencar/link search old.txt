@@ -1,0 +1,106 @@
+	/**
+	 * Enlaza automaticamente los links de los controladores registrados siguiendo
+	 * las <a href=
+	 * "https://www.hijosdelspectrum.com/2020/05/codigo-util-clase-configuracionrest.html">instrucciones
+	 * </a>
+	 * 
+	 * @param config {@link RepositoryRestConfiguration} para recuperar al
+	 *               {@code basePath}
+	 * @return el bean del tipo
+	 *         {@code RepresentationModelProcessor<RepositorySearchesResource>}
+	 */
+	@Bean
+	RepresentationModelProcessor<RepositorySearchesResource> addSearchLinks(RepositoryRestConfiguration config) {
+		Map<Class<?>, Class<?>> controllersRegistrados = new HashMap<>();
+		controllersRegistrados.put(Transaccion.class, TransaccionController.class);
+
+		return new RepresentationModelProcessor<RepositorySearchesResource>() {
+
+			@Override
+			public RepositorySearchesResource process(RepositorySearchesResource searchResource) {
+				if (controllersRegistrados.containsKey(searchResource.getDomainType())) {
+					Class<?> controller = controllersRegistrados.get(searchResource.getDomainType());
+					Method[] metodos = controller.getDeclaredMethods();
+					URI uriController = linkTo(controller).toUri();
+					String controllerPath = config.getBasePath() + uriController.getPath();
+					Stream.of(metodos).filter(
+							m -> m.isAnnotationPresent(ResponseBody.class) && m.isAnnotationPresent(GetMapping.class))
+							.map(m -> {
+								Link link = null;
+								try {
+									String pathMetodo = String.join("", m.getAnnotation(GetMapping.class).value());
+									String pathRecurso = new URI(uriController.getScheme(), uriController.getUserInfo(),
+											uriController.getHost(), uriController.getPort(),
+											controllerPath + pathMetodo, null, null).toString();
+									String requestParams = Stream.of(m.getParameters())
+											.filter(p -> p.isAnnotationPresent(RequestParam.class)).map(p -> {
+												String nombreParametro = p.getAnnotation(RequestParam.class).value();
+												return !"".equals(nombreParametro) ? nombreParametro : p.getName();
+											}).collect(Collectors.joining(","));
+									link = Link.of(URLDecoder.decode(pathRecurso, "UTF-8") + "{?" + requestParams + "}",
+											m.getName());
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								return link;
+							}).filter(l -> l != null).forEach(searchResource::add);
+				}
+
+				return searchResource;
+			}
+
+		};
+	}
+
+
+	@Bean
+	RepresentationModelProcessor<RepositorySearchesResource> addSearchLinks(RepositoryRestConfiguration config) {
+		Map<Class<?>, Class<?>> controllersRegistrados = Map.of(
+			Transaccion.class, TransaccionController.class
+			, Vehiculo.class, VehiculoController.class
+			// Para añadir más: , OtraEntidad.class, OtroController.class
+		);
+	
+		return searchResource -> {
+			var domainType = searchResource.getDomainType();
+			var controller = controllersRegistrados.get(domainType);
+	
+			if (controller != null) {
+				URI uriController = linkTo(controller).toUri();
+				String controllerPath = config.getBasePath() + uriController.getPath();
+	
+				Arrays.stream(controller.getDeclaredMethods())
+					.filter(m -> m.isAnnotationPresent(ResponseBody.class) && m.isAnnotationPresent(GetMapping.class))
+					.forEach(m -> {
+						try {
+							String pathMetodo = String.join("", m.getAnnotation(GetMapping.class).value());
+							String pathRecurso = new URI(
+								uriController.getScheme(), uriController.getUserInfo(),
+								uriController.getHost(), uriController.getPort(),
+								controllerPath + pathMetodo, null, null
+							).toString();
+	
+							String requestParams = Arrays.stream(m.getParameters())
+									.filter(p -> p.isAnnotationPresent(RequestParam.class))
+									.map(p -> {
+										var nombre = p.getAnnotation(RequestParam.class).value();
+										return nombre.isEmpty() ? p.getName() : nombre;
+									})
+									.collect(Collectors.joining(","));
+	
+							Link link = Link.of(
+								URLDecoder.decode(pathRecurso, "UTF-8") + "{?" + requestParams + "}",
+								m.getName()
+							);
+	
+							searchResource.add(link);
+	
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					});
+			}
+	
+			return searchResource;
+		};
+	}
