@@ -1,10 +1,10 @@
-package es.mde.supapeleria;
+package es.mde.alvencar;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SupapeleriaApplicationTests {
+class AlvencarApplicationTests {
 
 	@Test
 	void contextLoads() {
