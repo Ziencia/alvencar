@@ -23,7 +23,7 @@ public class alvencarApplication {
 		
 
 
-		ConfigurableApplicationContext context = SpringApplication.run(alvencar.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(alvencarApplication.class, args);
 
 		System.err.println("Está funcionando la aplicación");
 		log.debug("Está funcionando la aplicación");
