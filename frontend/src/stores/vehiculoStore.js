@@ -13,7 +13,6 @@ export const useVehiculoStore = defineStore('vehiculo', {
       this.error = null;
       try {
         const res = await axios.get('http://localhost:8083/api/vehiculos');
-
         this.vehiculos = res.data._embedded?.vehiculos || [];
       } catch (e) {
         this.error = 'Error al cargar vehículos';

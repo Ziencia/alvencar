@@ -58,3 +58,6 @@ application-dev.properties
 node_modules/
 dist/
 .env
+
+### Passwords ###
+src/main/resources/config/passwordsBD.properties
