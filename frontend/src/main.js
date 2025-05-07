@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
 
 import App from '@/App.vue'
-
 import Home from '@/components/Home.vue'
 
+import { createPinia } from 'pinia'
 import { createRouter, createWebHashHistory } from "vue-router";
 
 // Import our custom CSS
@@ -11,9 +11,14 @@ import '@/scss/styles.scss'
 
 // Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap'
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura';
+
+// Para el uso de los modales de formularios
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
 
 
 const NotFound = () => import('@/components/NotFound.vue');
@@ -35,6 +40,7 @@ const routes = [
     routes,
   });
 
+const pinia = createPinia()
 const app = createApp(App)
   
 app.use(router) 
@@ -43,5 +49,6 @@ app.use(PrimeVue, {
         preset: Aura
     }
 });
+app.use(pinia)
 app.mount('#app')
   

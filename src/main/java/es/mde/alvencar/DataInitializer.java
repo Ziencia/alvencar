@@ -1,5 +1,7 @@
 package es.mde.alvencar;
 
+import java.util.List;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -10,8 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import es.mde.entidades.Vehiculo;
 import es.mde.entidades.Venta;
 import es.mde.entidades.Alquiler;
+import es.mde.entidades.Cliente;
 import es.mde.entidades.Transaccion;
 import es.mde.repositorios.VehiculoDAO;
+import es.mde.repositorios.ClienteDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -23,14 +27,12 @@ public class DataInitializer {
     private EntityManager entityManager;
 
     @Bean
-    CommandLineRunner initData(VehiculoDAO vehiculoRepo) {
+    CommandLineRunner initVehiculos(VehiculoDAO vehiculoRepo) {
         return args -> {
 
             vehiculoRepo.deleteAll();      
             System.out.println("🧹 Datos anteriores eliminados.");
-
            
-            // 🚗 Vehículo con una venta
             Vehiculo vehiculo1 = new Vehiculo(
                 "1234ABC", "BAS12345678", "Toyota", "Corolla", "Rojo",
                 LocalDate.of(2020, 5, 20), "Compra"
@@ -75,6 +77,24 @@ public class DataInitializer {
             vehiculoRepo.save(vehiculo2);
 
             System.out.println("🚗 Datos de ejemplo cargados correctamente.");
+        };
+    }
+
+    @Bean
+    CommandLineRunner initClientes(ClienteDAO clienteRepo) {
+        return args -> {
+
+            clienteRepo.deleteAll();      
+            System.out.println("🧹 Datos anteriores de clientes eliminados.");
+           
+            List<Cliente> clientes = List.of(
+                new Cliente("12345678A", "Juan", "Pérez", "García", "Calle Falsa 123", "600123456"),
+                new Cliente("87654321B", "Ana", "López", "Martínez", "Av. Principal 45", "600654321"),
+                new Cliente("11223344C", "Luis", "Ramírez", "Sánchez", "C/ Mayor 10", "600789012")
+            );
+            clienteRepo.saveAll(clientes);
+
+            System.out.println("Datos de ejemplo de clientes cargados correctamente.");
         };
     }
 

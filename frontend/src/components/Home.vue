@@ -1,70 +1,84 @@
+<script>
+import { useVehiculoStore } from '@/stores/vehiculoStore';
+import { useClienteStore } from '@/stores/clienteStore';
+import { storeToRefs } from 'pinia';
+import { computed, onMounted } from 'vue';
+
+export default {
+    setup() {
+        const vehiculosStore = useVehiculoStore();
+        const clientesStore = useClienteStore();
+
+        const { vehiculos } = storeToRefs(vehiculosStore);
+        const { clientes } = storeToRefs(clientesStore);
+
+        onMounted(() => {
+            vehiculosStore.cargarVehiculos();
+            clientesStore.cargarClientes();
+        });
+
+        const totalVehiculos = computed(() => vehiculos.value.length);
+        const totalClientes = computed(() => clientes.value.length);
+
+        return {
+            totalVehiculos, totalClientes
+        };
+    }
+};
+</script>
+
 <template>
-    <div class="bg-surface-0 dark:bg-surface-950 px-6 md:px-12 lg:px-20 py-20 text-center">
-        <div class="flex flex-col gap-6">
-            <div class="flex flex-col items-center gap-4">
-                <div class="font-bold text-3xl leading-tight">
-                    <span class="text-surface-900 dark:text-surface-0">One Product, </span>
-                    <span class="text-primary-500 dark:text-primary-400">Many Solutions</span>
+
+    <div class="container mt-5">
+        <div class="row g-4">
+            <!-- Casilla 1: Total clientes -->
+            <div class="col-md-6 col-lg-6">
+                <div
+                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-fill display-4 mb-3"></i>
+                        <h4>Total de Clientes</h4>
+                        <h2> {{ totalClientes }} </h2>
+                    </div>
                 </div>
-                <div class="text-surface-500 dark:text-surface-400 leading-tight">Ac turpis egestas maecenas pharetra convallis posuere morbi leo urna.</div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="w-full rounded-md p-4">
-                    <span class="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-800 shadow mx-auto">
-                        <i class="pi pi-desktop !text-2xl lg:!text-3xl text-primary-500 dark:text-primary-400" />
-                    </span>
-                    <div class="flex flex-col gap-1">
-                        <div class="text-surface-900 dark:text-surface-0 text-xl font-medium leading-tight">Built for Developers</div>
-                        <p class="text-surface-500 dark:text-surface-400 leading-normal">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+            <!-- Casilla 2 -->
+            <div class="col-md-6 col-lg-6">
+                <div
+                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    <div class="card-body text-center">
+                        <i class="bi bi-car-front-fill display-4 mb-3"></i>
+                        <h4>Total de Vehículos</h4>
+                        <h2>{{ totalVehiculos }}</h2>
                     </div>
                 </div>
-                <div class="w-full rounded-md p-4">
-                    <span class="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-800 shadow mx-auto">
-                        <i class="pi pi-lock !text-2xl lg:!text-3xl text-primary-500 dark:text-primary-400" />
-                    </span>
-                    <div class="flex flex-col gap-1">
-                        <div class="text-surface-900 dark:text-surface-0 text-xl font-medium leading-tight">End-to-End Encryption</div>
-                        <p class="text-surface-500 dark:text-surface-400 leading-normal">Risus nec feugiat in fermentum posuere urna nec. Posuere sollicitudin aliquam ultrices sagittis.</p>
+            </div>
+
+            <!-- Casilla 3 -->
+            <div class="col-md-6 col-lg-6">
+                <div
+                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    <div class="card-body text-center">
+                        <i class="bi bi-car-front-fill display-4 mb-3"></i>
+                        <h4>Total de Transacciones</h4>
+                        <h2>??</h2>
                     </div>
                 </div>
-                <div class="w-full rounded-md p-4">
-                    <span class="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-800 shadow mx-auto">
-                        <i class="pi pi-face-smile !text-2xl lg:!text-3xl text-primary-500 dark:text-primary-400" />
-                    </span>
-                    <div class="flex flex-col gap-1">
-                        <div class="text-surface-900 dark:text-surface-0 text-xl font-medium leading-tight">Easy to Use</div>
-                        <p class="text-surface-500 dark:text-surface-400 leading-normal">Ornare suspendisse sed nisi lacus sed viverra tellus. Neque volutpat ac tincidunt vitae semper.</p>
-                    </div>
-                </div>
-                <div class="w-full rounded-md p-4">
-                    <span class="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-800 shadow mx-auto">
-                        <i class="pi pi-globe !text-2xl lg:!text-3xl text-primary-500 dark:text-primary-400" />
-                    </span>
-                    <div class="flex flex-col gap-1">
-                        <div class="text-surface-900 dark:text-surface-0 text-xl font-medium leading-tight">Fast & Global Support</div>
-                        <p class="text-surface-500 dark:text-surface-400 leading-normal">Fermentum et sollicitudin ac orci phasellus egestas tellus rutrum tellus.</p>
-                    </div>
-                </div>
-                <div class="w-full rounded-md p-4">
-                    <span class="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-800 shadow mx-auto">
-                        <i class="pi pi-github !text-2xl lg:!text-3xl text-primary-500 dark:text-primary-400" />
-                    </span>
-                    <div class="flex flex-col gap-1">
-                        <div class="text-surface-900 dark:text-surface-0 text-xl font-medium leading-tight">Open Source</div>
-                        <p class="text-surface-500 dark:text-surface-400 leading-normal">Nec tincidunt praesent semper feugiat. Sed adipiscing diam donec adipiscing tristique risus nec feugiat.</p>
-                    </div>
-                </div>
-                <div class="w-full rounded-md p-4">
-                    <span class="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-surface-0 dark:bg-surface-800 shadow mx-auto">
-                        <i class="pi pi-shield !text-2xl lg:!text-3xl text-primary-500 dark:text-primary-400" />
-                    </span>
-                    <div class="flex flex-col gap-1">
-                        <div class="text-surface-900 dark:text-surface-0 text-xl font-medium leading-tight">Trusted Security</div>
-                        <p class="text-surface-500 dark:text-surface-400 leading-normal">Mattis rhoncus urna neque viverra justo nec ultrices. Id cursus metus aliquam eleifend.</p>
+            </div>
+
+            <!-- Casilla 4 -->
+            <div class="col-md-6 col-lg-6">
+                <div
+                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    <div class="card-body text-center">
+                        <i class="bi bi-car-front-fill display-4 mb-3"></i>
+                        <h4>Total de XX</h4>
+                        <h2>??</h2>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-<script setup></script>
+
