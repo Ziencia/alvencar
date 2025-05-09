@@ -1,28 +1,36 @@
 <script>
 import { useVehiculoStore } from '@/stores/vehiculoStore';
 import { useClienteStore } from '@/stores/clienteStore';
-import { storeToRefs } from 'pinia';
-import { computed, onMounted } from 'vue';
+import { useTransaccionStore } from '@/stores/transaccionStore';
+import { mapState } from 'pinia';
 
 export default {
-    setup() {
+    computed: {
+        ...mapState(useVehiculoStore, ['vehiculos']),
+        ...mapState(useClienteStore, ['clientes']),
+        ...mapState(useTransaccionStore, ['ventas', 'alquileres']),
+
+        totalVehiculos() {
+            return this.vehiculos.length;
+        },
+        totalClientes() {
+            return this.clientes.length;
+        },
+        totalVentas() {
+            return this.ventas.length;
+        },
+        totalAlquileres() {
+            return this.alquileres.length;
+        }
+    },
+    mounted() {
         const vehiculosStore = useVehiculoStore();
         const clientesStore = useClienteStore();
+        const transaccionesStore = useTransaccionStore();
 
-        const { vehiculos } = storeToRefs(vehiculosStore);
-        const { clientes } = storeToRefs(clientesStore);
-
-        onMounted(() => {
-            vehiculosStore.cargarVehiculos();
-            clientesStore.cargarClientes();
-        });
-
-        const totalVehiculos = computed(() => vehiculos.value.length);
-        const totalClientes = computed(() => clientes.value.length);
-
-        return {
-            totalVehiculos, totalClientes
-        };
+        vehiculosStore.cargarVehiculos();
+        clientesStore.cargarClientes();
+        transaccionesStore.cargarTransacciones();
     }
 };
 </script>
@@ -60,9 +68,9 @@ export default {
                 <div
                     class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
-                        <i class="bi bi-car-front-fill display-4 mb-3"></i>
-                        <h4>Total de Transacciones</h4>
-                        <h2>??</h2>
+                        <i class="bi bi-piggy-bank-fill display-4 mb-3"></i>
+                        <h4>Total de Ventas</h4>
+                        <h2> {{  totalVentas }}</h2>
                     </div>
                 </div>
             </div>
@@ -72,9 +80,9 @@ export default {
                 <div
                     class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
-                        <i class="bi bi-car-front-fill display-4 mb-3"></i>
-                        <h4>Total de XX</h4>
-                        <h2>??</h2>
+                        <i class="bi bi-wallet-fill display-4 mb-3"></i>
+                        <h4>Total de Alquileres</h4>
+                        <h2>{{ totalAlquileres }}</h2>
                     </div>
                 </div>
             </div>
