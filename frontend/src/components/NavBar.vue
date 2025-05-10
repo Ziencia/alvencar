@@ -26,7 +26,7 @@
           </li>
           <li class="nav-item">
             <router-link class="nav-link d-flex align-items-center" to="/vehiculos">
-              <i class="bi bi-truck-front-fill me-2"></i> Vehículos
+              <i class="bi bi-car-front-fill me-2"></i> Vehículos
             </router-link>
           </li>
           <li class="nav-item">

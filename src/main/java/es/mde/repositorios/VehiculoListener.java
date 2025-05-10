@@ -24,7 +24,7 @@ public class VehiculoListener {
 
 	@Autowired
 	public void init(VehiculoDAO vehiculoDAO) {
-		this.vehiculoDAO = vehiculoDAO;
+		VehiculoListener.vehiculoDAO = vehiculoDAO;
 	}
 
 	/**
@@ -37,23 +37,23 @@ public class VehiculoListener {
 		boolean condicion = false;
 		if (vehiculoDAO.count() != 0) {
 			List<Vehiculo> vehiculos = vehiculoDAO.findAll().stream().collect(Collectors.toList());
-			System.err.println("Leyendo lista de vehiculo: Primer vehiculo" + vehiculos.get(0).getMatricula());
+			//System.err.println("Leyendo lista de vehiculo: Primer vehiculo" + vehiculos.get(0).getMatricula());
 		}
 		if (condicion) {
 			throw new Exception("Se cumple mi condición para no crearse el cliente");
 		} else {
-			System.err.println("Se va a guardar un vehiculo: " + vehiculo.getMatricula());
+			//System.err.println("Se va a guardar un vehiculo: " + vehiculo.getMatricula());
 		}
 	}
 
 	@PostRemove
 	public void postBorrar(Vehiculo vehiculo) {
-		System.err.println("Se ha borrado el vehiculo: " + vehiculo.getMatricula());
+		//System.err.println("Se ha borrado el vehiculo: " + vehiculo.getMatricula());
 	}
 
 	@PostUpdate
 	public void postActualizar(Vehiculo vehiculo) {
-		System.err.println("Se ha actualizado el vehiculo: " + vehiculo.getMatricula());
+		//System.err.println("Se ha actualizado el vehiculo: " + vehiculo.getMatricula());
 	}
 
 //	@PostLoad

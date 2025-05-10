@@ -33,7 +33,8 @@ public class ConfiguracionRest {
     public RepresentationModelProcessor<?> addSearchLinks(RepositoryRestConfiguration config) {
         Map<Class<?>, Class<?>> controllersRegistrados = Map.of(
                 Transaccion.class, TransaccionController.class,
-                Vehiculo.class, VehiculoController.class
+                Vehiculo.class, VehiculoController.class,
+                Cliente.class, Cliente.class
         );
 
         return resource -> {

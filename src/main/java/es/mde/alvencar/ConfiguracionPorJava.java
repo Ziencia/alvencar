@@ -20,12 +20,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
-//Sesión 17
-
 @Configuration
 @EnableTransactionManagement
 @PropertySource({ "classpath:config/rest.properties", "classpath:config/jackson.properties",
- "classpath:config/gestionBBDD.properties", "classpath:config/passwordsBD.properties" 
+ "classpath:config/gestionBBDD.properties"
+ , "classpath:config/passwordsBD.properties" 
 	})
 @EnableJpaRepositories("${misRepositorios}") // leer valor de propiedades? pero solo para las entidades anotadas
 @ComponentScan({"es.mde.repositorios", "es.mde.rest"})
@@ -59,14 +58,6 @@ public class ConfiguracionPorJava {
 
 	@Bean
 	public EntityManager entityManager(EntityManagerFactory emf) {
-		System.err.println("--- LAS ENTIDADES MAPEADAS SON ---");
-		emf.getMetamodel().getEntities().forEach(System.err::println);
-		System.err.println("----------------------------------");
-
 		return emf.createEntityManager();
 	}
-
-
-	// Sesion 17 Añadir link a /search se mueve en la sesion 19 a otro archivo ConfiguracionRest
-	
 }

@@ -19,9 +19,9 @@ public class Alquiler extends Transaccion{
   public Alquiler(){
   }
 
-  public Alquiler(float importe, Vehiculo vehiculo, LocalDateTime fechaHoraDevolucion, LocalDateTime fechaHoraDevuelto,
+  public Alquiler(float importe, Vehiculo vehiculo, Cliente cliente, LocalDateTime fechaHoraEntrega, LocalDateTime fechaHoraDevolucion, LocalDateTime fechaHoraDevuelto,
         float kmAntes, float kmDespues, float depositoAntes, float depositoDespues) {
-    super(importe, vehiculo);
+    super(vehiculo, cliente, importe, fechaHoraEntrega);
     this.fechaHoraDevolucion = fechaHoraDevolucion;
     this.fechaHoraDevuelto = fechaHoraDevuelto;
     this.kmAntes = kmAntes;

@@ -1,15 +1,19 @@
 package es.mde.entidades;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "CLIENTES")
-//@<EntityListeners(ClienteListener.class)
 public class Cliente {
 
     @Id
@@ -24,11 +28,10 @@ public class Cliente {
     private String direccion;
     private String telefono;
 
-    //@OneToMany(cascade = CascadeType.ALL, targetEntity = Factura.class, mappedBy = "cliente")
-	//private Collection<Factura> facturas = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Transaccion.class, mappedBy = "cliente")
+	private Collection<Transaccion> transacciones = new ArrayList<>();
 
     public Cliente(){
-
     }
 
     public Cliente(String cif, String nombre, String primerApellido, String segundoApellido, String direccion,
@@ -97,8 +100,17 @@ public class Cliente {
         this.telefono = telefono;
     }
 
+    public Collection<Transaccion> getTransacciones() {
+		return transacciones;
+	}
 
+	public void setTransacciones(Collection<Transaccion> transacciones) {
+		this.transacciones = transacciones;
+	}
 
- 
+    public void addTransaccion(Transaccion transaccion) {
+		getTransacciones().add(transaccion);
+		transaccion.setCliente(this);
+	} 
 
 }

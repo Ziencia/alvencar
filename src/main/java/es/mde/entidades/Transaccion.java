@@ -1,5 +1,7 @@
 package es.mde.entidades;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +13,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
 
 //Padre-Hijos
 import jakarta.persistence.DiscriminatorColumn;
@@ -33,18 +34,24 @@ public class Transaccion {
 	private Long id;
 
     private float importe;
+    private LocalDateTime fechaHoraEntrega;
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "VEHICULO")
 	private Vehiculo vehiculo;
 
-    public Transaccion() {
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CLIENTE")
+	private Cliente cliente;
 
+    public Transaccion() {
     }
 
-    public Transaccion(float importe, Vehiculo vehiculo){
-        this.importe = importe;
+    public Transaccion(Vehiculo vehiculo, Cliente cliente, float importe, LocalDateTime fechaHoraEntrega){
         this.vehiculo = vehiculo;
+        this.cliente = cliente;
+        this.importe = importe;
+        this.fechaHoraEntrega = fechaHoraEntrega;
     }
 
     public float getImporte() {
@@ -55,6 +62,30 @@ public class Transaccion {
         this.importe = importe;
     }    
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getFechaHoraEntrega() {
+        return fechaHoraEntrega;
+    }
+
+    public void setFechaHoraEntrega(LocalDateTime fechaHoraEntrega) {
+        this.fechaHoraEntrega = fechaHoraEntrega;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
     public Vehiculo getVehiculo() {
 		return vehiculo;
 	}
@@ -62,11 +93,4 @@ public class Transaccion {
 	public void setVehiculo(Vehiculo vehiculo) {
 		this.vehiculo = vehiculo;
 	}
-
-    @Override
-    public String toString() {
-        return "Vehiculo con matricula " + getVehiculo().getMatricula() + " por " + getImporte();
-    }
-
-
 }

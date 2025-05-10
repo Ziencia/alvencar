@@ -1,6 +1,6 @@
 package es.mde.entidades;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -10,14 +10,14 @@ import jakarta.persistence.Entity;
 public class Venta extends Transaccion {
 
     private String regimen;
-    private LocalDate fechaFinGarantia;
+    private LocalDateTime fechaFinGarantia;
 
     public Venta() {
-
     }
 
-    public Venta(float importe, Vehiculo vehiculo, String regimen, LocalDate fechaFinGarantia) {
-        super(importe, vehiculo);
+    public Venta(Vehiculo vehiculo, Cliente cliente, float importe, LocalDateTime fechaHoraEntrega, String regimen,
+            LocalDateTime fechaFinGarantia) {
+        super(vehiculo,cliente,importe,fechaHoraEntrega);
         this.regimen = regimen;
         this.fechaFinGarantia = fechaFinGarantia;
     }
@@ -30,11 +30,11 @@ public class Venta extends Transaccion {
         this.regimen = regimen;
     }
 
-    public LocalDate getFechaFinGarantia() {
+    public LocalDateTime getFechaFinGarantia() {
         return fechaFinGarantia;
     }
 
-    public void setFechaFinGarantia(LocalDate fechaFinGarantia) {
+    public void setFechaFinGarantia(LocalDateTime fechaFinGarantia) {
         this.fechaFinGarantia = fechaFinGarantia;
-    }   
+    }
 }
