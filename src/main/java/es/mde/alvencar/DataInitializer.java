@@ -9,16 +9,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import es.mde.entidades.Vehiculo;
-import es.mde.entidades.Venta;
-import es.mde.entidades.Alquiler;
-import es.mde.entidades.Cliente;
-import es.mde.entidades.Transaccion;
-import es.mde.repositorios.VehiculoDAO;
-import es.mde.repositorios.ClienteDAO;
+import es.mde.entidades.*;
+import es.mde.repositorios.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
 
 @Configuration
 public class DataInitializer {
@@ -27,75 +21,46 @@ public class DataInitializer {
     private EntityManager entityManager;
 
     @Bean
-    CommandLineRunner initVehiculos(VehiculoDAO vehiculoRepo) {
-        return args -> {
+    CommandLineRunner initData(ClienteDAO clienteRepo, VehiculoDAO vehiculoRepo, TransaccionDAO transaccionesRepo) {
+    return args -> {
 
-            vehiculoRepo.deleteAll();      
-            System.out.println("🧹 Datos anteriores eliminados.");
-           
-            Vehiculo vehiculo1 = new Vehiculo(
-                "1234ABC", "BAS12345678", "Toyota", "Corolla", "Rojo",
-                LocalDate.of(2020, 5, 20), "Compra"
-            );
+        transaccionesRepo.deleteAll();
+        clienteRepo.deleteAll();
+        vehiculoRepo.deleteAll();
 
-            Venta venta1 = new Venta(
-                4500.0f,
-                vehiculo1,
-                "Directo",
-                LocalDate.of(2026, 5, 20)
-            );
+        Cliente cliente1 = new Cliente("12345678A", "Juan", "Pérez", "García", "Calle Falsa 123", "600123456");
+        Cliente cliente2 = new Cliente("87654321B", "Ana", "López", "Martínez", "Av. Principal 45", "600654321");
+        Cliente cliente3 = new Cliente("11223344C", "Luis", "Ramírez", "Sánchez", "C/ Mayor 10", "600789012");
+    
+        Vehiculo vehiculo1 = new Vehiculo("1234ABC", "BAS12345678", "Toyota", "Corolla", "Rojo",
+        LocalDate.of(2020, 5, 20), "Compra");
+        Vehiculo vehiculo2 = new Vehiculo(
+        "5678XYZ", "BAS87654321", "Ford", "Focus", "Azul",
+        LocalDate.of(2019, 7, 15), "Leasing");
 
-            vehiculo1.addTransaccion(venta1);
+        List<Vehiculo> vehiculos = List.of(vehiculo1, vehiculo2);
+        vehiculoRepo.saveAll(vehiculos);
 
-            Vehiculo vehiculo2 = new Vehiculo(
-                "5678XYZ", "BAS87654321", "Ford", "Focus", "Azul",
-                LocalDate.of(2019, 7, 15), "Leasing"
-            );
+        List<Cliente> clientes = List.of(cliente1, cliente2, cliente3);
+        clienteRepo.saveAll(clientes);
 
-            Alquiler alquiler1 = new Alquiler(
-                320.0f,
-                vehiculo2,
-                LocalDateTime.of(2025, 5, 1, 10, 0),
-                LocalDateTime.of(2025, 5, 3, 16, 30),
-                15000f,
-                15540f,
-                0.75f,
-                0.30f
-            );
+        Transaccion venta1 = new Venta(vehiculo1, cliente1, 4500.0f, LocalDateTime.of(2025, 5, 10, 10, 00), "Directo",
+                LocalDateTime.of(2027, 5, 20, 10, 00));
+        vehiculo1.addTransaccion(venta1);
+        cliente1.addTransaccion(venta1);
 
-            vehiculo2.addTransaccion(alquiler1);
+        Transaccion alquiler1 = new Alquiler(350f, vehiculo1, cliente1,
+                LocalDateTime.of(2025, 5, 12, 10, 00), null, LocalDateTime.of(2025, 5, 14, 10, 00), 100f, 80f, 60f,
+                60f);
+        Transaccion alquiler2 = new Alquiler(600f, vehiculo1, cliente1,
+                LocalDateTime.of(2025, 5, 12, 10, 00), null, LocalDateTime.of(2025, 5, 14, 10, 00), 100f, 80f, 60f,
+                60f);
+        vehiculo2.addTransaccion(alquiler1);
+        vehiculo2.addTransaccion(alquiler2);
+        cliente2.addTransaccion(alquiler1);
+        cliente2.addTransaccion(alquiler2);
 
-            Transaccion trans1 = new Transaccion(150.0f, vehiculo1);
-            Transaccion trans2 = new Transaccion(75.5f, vehiculo1);
-            Transaccion trans3 = new Transaccion(200.0f, vehiculo2);
-
-            vehiculo1.addTransaccion(trans1);
-            vehiculo1.addTransaccion(trans2);
-            vehiculo2.addTransaccion(trans3);
-
-            vehiculoRepo.save(vehiculo1);
-            vehiculoRepo.save(vehiculo2);
-
-            System.out.println("🚗 Datos de ejemplo cargados correctamente.");
-        };
-    }
-
-    @Bean
-    CommandLineRunner initClientes(ClienteDAO clienteRepo) {
-        return args -> {
-
-            clienteRepo.deleteAll();      
-            System.out.println("🧹 Datos anteriores de clientes eliminados.");
-           
-            List<Cliente> clientes = List.of(
-                new Cliente("12345678A", "Juan", "Pérez", "García", "Calle Falsa 123", "600123456"),
-                new Cliente("87654321B", "Ana", "López", "Martínez", "Av. Principal 45", "600654321"),
-                new Cliente("11223344C", "Luis", "Ramírez", "Sánchez", "C/ Mayor 10", "600789012")
-            );
-            clienteRepo.saveAll(clientes);
-
-            System.out.println("Datos de ejemplo de clientes cargados correctamente.");
-        };
-    }
-
-}
+        List<Transaccion> transacciones = List.of(venta1,alquiler1,alquiler2);
+        transaccionesRepo.saveAll(transacciones);
+    };
+}}
