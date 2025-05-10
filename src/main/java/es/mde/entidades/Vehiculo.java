@@ -1,6 +1,5 @@
 package es.mde.entidades;
 
-//@OneToMany. Vehiculos tendra una coleccion de transacciones
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,8 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-
 
 import java.time.LocalDate;
 
@@ -41,7 +38,6 @@ public class Vehiculo {
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Transaccion.class, mappedBy = "vehiculo")
 	private Collection<Transaccion> transacciones = new ArrayList<>();
 
-    // Constructors
     public Vehiculo() {}
 
     public Vehiculo(String matricula, String bastidor, String marca, String modelo,
@@ -53,6 +49,14 @@ public class Vehiculo {
         this.color = color;
         this.fechaMatriculacion = fechaMatriculacion;
         this.condicionAdquisicion = condicionAdquisicion;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getMatricula() {
@@ -123,5 +127,5 @@ public class Vehiculo {
 		getTransacciones().add(transaccion);
 		transaccion.setVehiculo(this);
 	}
-
+    
 }
