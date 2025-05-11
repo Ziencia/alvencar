@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const host = 'http://localhost:8083/';
+const host = 'https://alvencar-ac4e236c0ceb.herokuapp.com/';
 const API_CLIENTES = host + "api/clientes";
 const API_VEHICULOS = host + "api/vehiculos";
 const API_FACTURAS = host + "api/facturas";
