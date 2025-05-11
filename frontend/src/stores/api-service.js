@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const host = 'https://alvencar-ac4e236c0ceb.herokuapp.com/';
-const API_CLIENTES = host + "api/clientes";
-const API_VEHICULOS = host + "api/vehiculos";
-const API_FACTURAS = host + "api/facturas";
-const API_VENTAS = host +"api/ventas";
-const API_TRANSACCIONES = host + "api/transacciones";
+const host = 'https://alvencar-ac4e236c0ceb.herokuapp.com/api/';
+const API_CLIENTES = host + "clientes";
+const API_VEHICULOS = host + "vehiculos";
+const API_FACTURAS = host + "facturas";
+const API_VENTAS = host +"ventas";
+const API_TRANSACCIONES = host + "transacciones";
 
 export function cambiarHttpPorHttps(enlace) {
     return enlace.replace(/^http:/, 'https:');
