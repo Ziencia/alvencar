@@ -20,12 +20,12 @@ import Aura from '@primeuix/themes/aura';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
-
 const NotFound = () => import('@/components/NotFound.vue');
 const Clientes = () => import('@/components/Clientes.vue');
 const Vehiculos = () => import('@/components/Vehiculos.vue');
 const Transacciones = () => import('@/components/Transacciones.vue');
 const Venta = () => import('@/components/Venta.vue');
+const Factura = () => import('@/components/Facturas.vue');
 
 const routes = [
     { path: '/', redirect: '/home' },
@@ -34,6 +34,7 @@ const routes = [
     { path: '/vehiculos', component: Vehiculos, name: 'vehiculos'},
     { path: '/transacciones', component: Transacciones, name: 'transacciones'},
     { path: '/venta', component: Venta, name: 'venta'},
+    { path: '/facturas', component: Factura, name: 'factura'},
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
   ];
 

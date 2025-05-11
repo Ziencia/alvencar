@@ -2,6 +2,7 @@
 import { useVehiculoStore } from '@/stores/vehiculoStore';
 import { useClienteStore } from '@/stores/clienteStore';
 import { useTransaccionStore } from '@/stores/transaccionStore';
+import { useFacturaStore } from '@/stores/facturaStore';
 import { mapState } from 'pinia';
 
 export default {
@@ -9,6 +10,7 @@ export default {
         ...mapState(useVehiculoStore, ['vehiculos']),
         ...mapState(useClienteStore, ['clientes']),
         ...mapState(useTransaccionStore, ['ventas', 'alquileres']),
+        ...mapState(useFacturaStore, ['facturas']),
 
         totalVehiculos() {
             return this.vehiculos.length;
@@ -21,23 +23,28 @@ export default {
         },
         totalAlquileres() {
             return this.alquileres.length;
+        },
+        totalFacturas() {
+            return this.facturas.length;
         }
     },
     mounted() {
         const vehiculosStore = useVehiculoStore();
         const clientesStore = useClienteStore();
         const transaccionesStore = useTransaccionStore();
+        const facturaStore = useFacturaStore();
 
         vehiculosStore.cargarVehiculos();
         clientesStore.cargarClientes();
         transaccionesStore.cargarTransacciones();
+        facturaStore.cargarFacturas();
     }
 };
 </script>
 
 <template>
 
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <div class="row g-4">
             <!-- Casilla 1: Total clientes -->
             <div class="col-md-6 col-lg-6">
@@ -70,7 +77,7 @@ export default {
                     <div class="card-body text-center">
                         <i class="bi bi-piggy-bank-fill display-4 mb-3"></i>
                         <h4>Total de Ventas</h4>
-                        <h2> {{  totalVentas }}</h2>
+                        <h2> {{ totalVentas }}</h2>
                     </div>
                 </div>
             </div>
@@ -86,7 +93,30 @@ export default {
                     </div>
                 </div>
             </div>
+
+            <!-- Casilla 5 -->
+            <div class="col-md-6 col-lg-6">
+                <div
+                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    <div class="card-body text-center">
+                        <i class="bi bi-currency-euro display-4 mb-3"></i>
+                        <h4>Total de Facturas</h4>
+                        <h2>{{ totalFacturas }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Casilla 6 -->
+            <div class="col-md-6 col-lg-6">
+                <div
+                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    <div class="card-body text-center">
+                        <i class="bi bi-info-circle display-4 mb-3"></i>
+                        <h4>Info:</h4>
+                        <p>V 1.0 Sprint Goal 1, 14/05/25</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
-

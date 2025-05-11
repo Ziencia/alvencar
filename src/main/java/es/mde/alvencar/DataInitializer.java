@@ -21,9 +21,10 @@ public class DataInitializer {
     private EntityManager entityManager;
 
     @Bean
-    CommandLineRunner initData(ClienteDAO clienteRepo, VehiculoDAO vehiculoRepo, TransaccionDAO transaccionesRepo) {
+    CommandLineRunner initData(ClienteDAO clienteRepo, VehiculoDAO vehiculoRepo, TransaccionDAO transaccionesRepo, FacturaDAO facturasRepo) {
     return args -> {
 
+        facturasRepo.deleteAll();
         transaccionesRepo.deleteAll();
         clienteRepo.deleteAll();
         vehiculoRepo.deleteAll();

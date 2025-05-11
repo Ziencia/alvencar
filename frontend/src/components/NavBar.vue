@@ -5,15 +5,8 @@
         <i class="bi bi-house-door-fill me-2"></i> INICIO
       </router-link>
 
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -32,6 +25,11 @@
           <li class="nav-item">
             <router-link class="nav-link d-flex align-items-center" to="/transacciones">
               <i class="bi bi-cash-stack me-2"></i> Transacciones
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link d-flex align-items-center" to="/facturas">
+              <i class="bi bi-currency-euro me-2"></i> Facturas
             </router-link>
           </li>
         </ul>

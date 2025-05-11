@@ -23,11 +23,10 @@ import jakarta.persistence.EntityManagerFactory;
 @Configuration
 @EnableTransactionManagement
 @PropertySource({ "classpath:config/rest.properties", "classpath:config/jackson.properties",
- "classpath:config/gestionBBDD.properties"
- , "classpath:config/passwordsBD.properties" 
-	})
+		"classpath:config/gestionBBDD.properties", "classpath:config/passwordsBD.properties"
+})
 @EnableJpaRepositories("${misRepositorios}") // leer valor de propiedades? pero solo para las entidades anotadas
-@ComponentScan({"es.mde.repositorios", "es.mde.rest"})
+@ComponentScan({ "es.mde.repositorios", "es.mde.rest" })
 public class ConfiguracionPorJava {
 
 	@Value("${misEntidades}")
@@ -39,15 +38,14 @@ public class ConfiguracionPorJava {
 
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setDataSource(dataSource);
-//	    JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter(); // O pedirlo como parametro y que haga el Autowired
+		// JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter(); // O
+		// pedirlo como parametro y que haga el Autowired
 		em.setJpaVendorAdapter(vendorAdapter);
 
 		em.setPackagesToScan(entidades); // leer valor de propiedades? pero solo para las entidades anotadas
-		em.setMappingResources("jpa/Perro.orm.xml"); //para escanear archivos xml...
-		// leerValorDePropiedades?
-
 		Properties jpaProperties = new Properties();
-		Arrays.asList("dialect", "show_sql", "hbm2ddl.auto", "enable_lazy_load_no_trans") //  leer valor de	para las entidades anotadas 
+		Arrays.asList("dialect", "show_sql", "hbm2ddl.auto", "enable_lazy_load_no_trans") // leer valor de para las
+																							// entidades anotadas
 				.stream().map(s -> "hibernate." + s)
 				.map(p -> new AbstractMap.SimpleEntry<String, String>(p, env.getProperty(p)))
 				.filter(e -> e.getValue() != null).forEach(e -> jpaProperties.put(e.getKey(), e.getValue()));

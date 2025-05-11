@@ -75,8 +75,8 @@ export default {
   <div class="container mt-4">
     <h2 class="mb-4 text-primary">📚 Listado de Transacciones</h2>
 
-        <!-- Mensajes de carga y error -->
-        <div v-if="cargando" class="alert alert-info">Cargando clientes...</div>
+    <!-- Mensajes de carga y error -->
+    <div v-if="cargando" class="alert alert-info">Cargando clientes...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
     <!-- Conteo -->
@@ -84,23 +84,24 @@ export default {
       <strong>Transacciones cargadas:</strong> {{ totalTransacciones }}
     </div>
 
-        <div class="mb-3 d-flex gap-2">
-            <button @click="$router.push({ name: 'venta' })" class="btn btn-primary">
-                📑 Añadir Venta
-            </button>
-            <button class="btn btn-primary">
-                🏪 Añadir Alquiler
-            </button>
-        </div>
-
+    <div class="mb-3 d-flex gap-2">
+      <button @click="$router.push({ name: 'venta' })" class="btn btn-primary">
+        📑 Añadir Venta
+      </button>
+      <button class="btn btn-primary">
+        🏪 Añadir Alquiler
+      </button>
+    </div>
 
     <!-- Tabs Bootstrap -->
     <ul class="nav nav-tabs mb-4" id="transaccionTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="ventas-tab" data-bs-toggle="tab" data-bs-target="#ventas" type="button" role="tab">Ventas</button>
+        <button class="nav-link active" id="ventas-tab" data-bs-toggle="tab" data-bs-target="#ventas" type="button"
+          role="tab">Ventas</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="alquileres-tab" data-bs-toggle="tab" data-bs-target="#alquileres" type="button" role="tab">Alquileres</button>
+        <button class="nav-link" id="alquileres-tab" data-bs-toggle="tab" data-bs-target="#alquileres" type="button"
+          role="tab">Alquileres</button>
       </li>
     </ul>
 
@@ -121,18 +122,20 @@ export default {
                 <hr />
 
                 <p><strong>Datos del vehículo asociado:</strong></p>
-                <p> {{ venta.vehiculo?.marca }} {{ venta.vehiculo?.modelo }}, con matrícula <strong>{{ venta.vehiculo?.matricula }}</strong> </p>
-        
+                <p> {{ venta.vehiculo?.marca }} {{ venta.vehiculo?.modelo }}, con matrícula <strong>{{
+                  venta.vehiculo?.matricula }}</strong> </p>
+
                 <hr />
                 <p><strong>Datos del cliente asociado:</strong></p>
-                <p><strong>{{ venta.cliente?.cif }}</strong>, {{ venta.cliente?.nombre }} {{ venta.cliente?.primerApellido }} {{ venta.cliente?.segundoApellido }}</p>
-               
+                <p><strong>{{ venta.cliente?.cif }}</strong>, {{ venta.cliente?.nombre }} {{
+                  venta.cliente?.primerApellido }} {{ venta.cliente?.segundoApellido }}</p>
+
                 <button class="btn btn-outline-primary mt-3" @click="abrirModalFactura(venta)">
-   Generar Factura
-</button>
-              <div class="d-flex justify-content-end gap-2">
-                <button class="btn btn-sm btn-danger" @click="eliminarTransaccion(venta)">Eliminar</button>
-              </div>
+                  Generar Factura
+                </button>
+                <div class="d-flex justify-content-end gap-2">
+                  <button class="btn btn-sm btn-danger" @click="eliminarTransaccion(venta)">Eliminar</button>
+                </div>
               </div>
             </div>
           </div>
@@ -166,8 +169,8 @@ export default {
                 <hr />
                 <p><strong>👤 Cliente:</strong></p>
                 <ul>
-                    <li><strong>CIF:</strong> {{ alquiler.cliente?.cif }}</li>
-                    <li><strong>NOMBRE:</strong> {{ alquiler.cliente?.nombre }}</li>
+                  <li><strong>CIF:</strong> {{ alquiler.cliente?.cif }}</li>
+                  <li><strong>NOMBRE:</strong> {{ alquiler.cliente?.nombre }}</li>
                 </ul>
               </div>
             </div>
@@ -178,32 +181,36 @@ export default {
     </div>
   </div>
 
-  <div v-show="facturaSeleccionada" class="modal fade" id="facturaModal" tabindex="-1" aria-labelledby="facturaModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="facturaModalLabel">¿Quiere generar la factura?</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>FACTURA DE VENTA</strong></p>
-        <p><strong>Cliente:</strong><br /> 
-          {{ facturaSeleccionada?.cliente?.nombre }} {{ facturaSeleccionada?.cliente?.primerApellido }} {{ facturaSeleccionada?.cliente?.segundoApellido }}, DNI: {{ facturaSeleccionada?.cliente?.cif }}
-          <br>{{ facturaSeleccionada?.cliente?.direccion}}, Telefono: {{ facturaSeleccionada?.cliente?.telefono }}        </p>
+  <div v-show="facturaSeleccionada" class="modal fade" id="facturaModal" tabindex="-1"
+    aria-labelledby="facturaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="facturaModalLabel">¿Quiere generar la factura?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>FACTURA DE VENTA</strong></p>
+          <p><strong>Cliente:</strong><br />
+            {{ facturaSeleccionada?.cliente?.nombre }} {{ facturaSeleccionada?.cliente?.primerApellido }} {{
+              facturaSeleccionada?.cliente?.segundoApellido }}, DNI: {{ facturaSeleccionada?.cliente?.cif }}
+            <br>{{ facturaSeleccionada?.cliente?.direccion }}, Telefono: {{ facturaSeleccionada?.cliente?.telefono }}
+          </p>
 
-        <p><strong>Vehículo:</strong> <br />
-          {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{ facturaSeleccionada?.vehiculo?.matricula }}</p>
-        <p><strong>Importe de venta:</strong> {{ facturaSeleccionada?.importe }} €</p>
-        <p><strong>Calculo de impuestos:</strong> 21% </p>
-        <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importe * 1.21 }} € </p>
-        <p><strong>Fecha:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" @click="confirmarGenerarFactura">Confirmar</button>
+          <p><strong>Vehículo:</strong> <br />
+            {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{
+              facturaSeleccionada?.vehiculo?.matricula }}</p>
+          <p><strong>Importe de venta:</strong> {{ facturaSeleccionada?.importe }} €</p>
+          <p><strong>Calculo de impuestos:</strong> 21% </p>
+          <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importe * 1.21 }} € </p>
+          <p><strong>Fecha:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" @click="confirmarGenerarFactura">Confirmar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </template>

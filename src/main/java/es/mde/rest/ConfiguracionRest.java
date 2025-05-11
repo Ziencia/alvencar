@@ -34,8 +34,8 @@ public class ConfiguracionRest {
         Map<Class<?>, Class<?>> controllersRegistrados = Map.of(
                 Transaccion.class, TransaccionController.class,
                 Vehiculo.class, VehiculoController.class,
-                Cliente.class, Cliente.class
-        );
+                Cliente.class, Cliente.class,
+                Factura.class, FacturaController.class);
 
         return resource -> {
             if (resource instanceof RepositorySearchesResource searchResource) {
@@ -48,13 +48,13 @@ public class ConfiguracionRest {
                         String controllerPath = config.getBasePath() + uriController.getPath();
 
                         for (var method : controller.getDeclaredMethods()) {
-                            if (method.isAnnotationPresent(ResponseBody.class) && method.isAnnotationPresent(GetMapping.class)) {
+                            if (method.isAnnotationPresent(ResponseBody.class)
+                                    && method.isAnnotationPresent(GetMapping.class)) {
                                 String pathMetodo = String.join("", method.getAnnotation(GetMapping.class).value());
                                 URI fullUri = new URI(
                                         uriController.getScheme(), uriController.getUserInfo(),
                                         uriController.getHost(), uriController.getPort(),
-                                        controllerPath + pathMetodo, null, null
-                                );
+                                        controllerPath + pathMetodo, null, null);
 
                                 String requestParams = Arrays.stream(method.getParameters())
                                         .filter(p -> p.isAnnotationPresent(RequestParam.class))
@@ -66,8 +66,7 @@ public class ConfiguracionRest {
 
                                 Link link = Link.of(
                                         URLDecoder.decode(fullUri.toString(), "UTF-8") + "{?" + requestParams + "}",
-                                        method.getName()
-                                );
+                                        method.getName());
 
                                 searchResource.add(link);
                             }
@@ -83,38 +82,38 @@ public class ConfiguracionRest {
         };
     }
 
-    	/**
-	 * Ver tambien <a href=
-	 * "https://docs.spring.io/spring-data/rest/docs/current/reference/html/#customizing-sdr.configuring-cors">
-	 * Configuring CORS</a> para configuracion Data Rest adicional heredada con
-	 * {@link org.springframework.web.bind.annotation.CrossOrigin}.
-	 * 
-	 * @return bean del tipo {@link CorsFilter} permitiendo cualquier solicitud
-	 */
-	@Bean
-	CorsFilter corsFilter() {
-		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		final CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.setAllowedOriginPatterns(Collections.singletonList("*"));
-		config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
-		source.registerCorsConfiguration("/**", config);
+    /**
+     * Ver tambien <a href=
+     * "https://docs.spring.io/spring-data/rest/docs/current/reference/html/#customizing-sdr.configuring-cors">
+     * Configuring CORS</a> para configuracion Data Rest adicional heredada con
+     * {@link org.springframework.web.bind.annotation.CrossOrigin}.
+     * 
+     * @return bean del tipo {@link CorsFilter} permitiendo cualquier solicitud
+     */
+    @Bean
+    CorsFilter corsFilter() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        source.registerCorsConfiguration("/**", config);
 
-		return new CorsFilter(source);
-	}
-     
+        return new CorsFilter(source);
+    }
+
     /*
-    	@Bean
-	public ObjectMapper getObjectMapper() {
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.addMixIn(Cliente.class, MixIns.Clientes.class);
-		mapper.addMixIn(Libro.class, MixIns.Libros.class);
-		mapper.addMixIn(Cuaderno.class, MixIns.Cuadernos.class);
-
-		return mapper;
-	}
-        */
+     * @Bean
+     * public ObjectMapper getObjectMapper() {
+     * 
+     * ObjectMapper mapper = new ObjectMapper();
+     * mapper.addMixIn(Cliente.class, MixIns.Clientes.class);
+     * mapper.addMixIn(Libro.class, MixIns.Libros.class);
+     * mapper.addMixIn(Cuaderno.class, MixIns.Cuadernos.class);
+     * 
+     * return mapper;
+     * }
+     */
 
 }
