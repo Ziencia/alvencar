@@ -36,3 +36,8 @@ tasks.withType(JavaCompile) {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Para desplegar en Heroku
+tasks.named("jar") {
+	enabled=false
+}
