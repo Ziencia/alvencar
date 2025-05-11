@@ -5,6 +5,7 @@ const API_CLIENTES = host + "api/clientes";
 const API_VEHICULOS = host + "api/vehiculos";
 const API_FACTURAS = host + "api/facturas";
 const API_VENTAS = host +"api/ventas";
+const API_TRANSACCIONES = host + "api/transacciones";
 
 export function cambiarHttpPorHttps(enlace) {
     return enlace.replace(/^http:/, 'https:');
@@ -61,4 +62,11 @@ export function updateFactura(href, data) {
 }
 export function postVenta(data) {
   return llamadaAPI("post", data, API_VENTAS);
+}
+export function getTransacciones() {
+  return llamadaAPI("get", null, API_TRANSACCIONES);
+}
+export function deleteTransaccionPorId(id) {
+  const url = API_TRANSACCIONES+`/eliminar/${id}`;
+  return llamadaAPI("delete", null, url);
 }

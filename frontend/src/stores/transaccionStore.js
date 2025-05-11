@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
+import { getTransacciones, postFactura, deleteTransaccionPorId } from './api-service';
 
 export const useTransaccionStore = defineStore('transaccion', {
   state: () => ({
@@ -13,7 +14,7 @@ export const useTransaccionStore = defineStore('transaccion', {
       this.cargando = true;
       this.error = null;
       try {
-        const res = await axios.get('http://localhost:8083/api/transacciones');
+        const res = await getTransacciones();
         this.ventas = res.data._embedded?.ventas || [];
         this.alquileres = res.data._embedded?.alquileres || [];
 
@@ -24,7 +25,6 @@ export const useTransaccionStore = defineStore('transaccion', {
               const vehiculoRes = await axios.get(venta._links.vehiculo.href);
               ventaCompleta.vehiculo = vehiculoRes.data;
             } catch (e) {
-              console.error('Error al cargar vehículo de venta', e);
               ventaCompleta.vehiculo = null;
             }
             try {
@@ -32,7 +32,6 @@ export const useTransaccionStore = defineStore('transaccion', {
               //await axios.get(venta._links.cliente.href);
               ventaCompleta.cliente = clienteRes.data;
             } catch (e) {
-              console.error('Error al cargar cliente de venta', e);
               ventaCompleta.cliente = null;
             }
             return ventaCompleta;
@@ -46,14 +45,12 @@ export const useTransaccionStore = defineStore('transaccion', {
               const vehiculoRes = await axios.get(alquiler._links.vehiculo.href);
               alquilerCompleto.vehiculo = vehiculoRes.data;
             } catch (e) {
-              console.error('Error al cargar vehículo de alquiler', e);
               alquilerCompleto.vehiculo = null;
             }
             try {
               const clienteRes = await axios.get(limpiarHref(alquiler._links.cliente.href));
               alquilerCompleto.cliente = clienteRes.data;
             } catch (e) {
-              console.error('Error al cargar cliente de alquiler', e);
               alquilerCompleto.cliente = null;
             }
             return alquilerCompleto;
@@ -61,7 +58,6 @@ export const useTransaccionStore = defineStore('transaccion', {
 
       } catch (e) {
         this.error = 'Error al cargar transacciones';
-        console.error(e);
       } finally {
         this.cargando = false;
       }
@@ -71,15 +67,13 @@ export const useTransaccionStore = defineStore('transaccion', {
         const res = await axios.get(transaccion._links.vehiculo.href);
         return res.data;
       } catch (error) {
-        console.error('Error al cargar vehículo:', error);
         return null;
       }
     },
     async crearFactura(factura) {
       try {
-        const res = await axios.post('http://localhost:8083/api/facturas', factura);
+        const res = await postFactura(factura);
       } catch (e) {
-        console.error("Error al crear factura:", e);
         this.error = 'No se pudo crear la factura';
       }
     },
@@ -89,7 +83,7 @@ export const useTransaccionStore = defineStore('transaccion', {
 
         if (!id) throw new Error("No se pudo extraer el ID de la transaccion");
 
-        await axios.delete(`http://localhost:8083/api/transacciones/eliminar/${id}`);
+        await deleteTransaccionPorId(id);
       } catch (e) {
         console.error('Error al eliminar cliente:', e);
         this.error = 'No se pudo eliminar el cliente';
