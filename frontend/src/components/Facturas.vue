@@ -112,7 +112,7 @@ export default {
             <h5 class="card-title" :class="factura.estaPagada ? 'text-success' : 'text-danger'">
               {{ factura.conceptoFactura }}
             </h5>
-            <p><strong>Nº de factura:</strong> {{ extraerIdDesdeUrl(factura._links.self.href) }}</p>
+            <p><strong>Nº de factura:</strong> {{ extraerIdDesdeUrl(factura._links?.self?.href || '') }}</p>
             <p><strong>Cliente:</strong> {{ factura.nombreApellidosDNI }}</p>
             <p><strong>Dirección:</strong> {{ factura.datosDireccionLocalizacion }}</p>
             <p><strong>Vehículo:</strong> {{ factura.datosVehiculo }}</p>
