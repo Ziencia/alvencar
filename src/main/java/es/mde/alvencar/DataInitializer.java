@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+//import org.springframework.context.annotation.Configuration;
 
 import es.mde.entidades.*;
 import es.mde.repositorios.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-@Configuration
+//@Configuration
 public class DataInitializer {
 
     @PersistenceContext
