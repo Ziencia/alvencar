@@ -23,8 +23,8 @@ La aplicación será diseñada para acceder a ella desde entorno web en un orden
    1. Repositorio proyecto: <https://git.institutomilitar.com/ManuelDeBlas/alvencar>
    2. Librería: <https://github.com/ManuelDeBlas/alvencar>
 7. **Despliegue** en Internet:
-   1. API: 
-   2. Web: 
+   1. API: https://alvencar-ac4e236c0ceb.herokuapp.com/api
+   2. Web: https://alvencar.netlify.app/#/home
 
 ## Interfaz de usuario
 
