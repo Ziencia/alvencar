@@ -4,6 +4,7 @@ const host = 'http://localhost:8083/';
 const API_CLIENTES = host + "api/clientes";
 const API_VEHICULOS = host + "api/vehiculos";
 const API_FACTURAS = host + "api/facturas";
+const API_VENTAS = host +"api/ventas";
 
 export function cambiarHttpPorHttps(enlace) {
     return enlace.replace(/^http:/, 'https:');
@@ -53,8 +54,11 @@ export function getFacturas() {
   return llamadaAPI("get", null, API_FACTURAS);
 }
 export function postFactura(data) {
-    return llamadaAPI("post", data, API_FACTURAS)
+    return llamadaAPI("post", data, API_FACTURAS);
 }
 export function updateFactura(href, data) {
     return llamadaAPI("put", data, href);
+}
+export function postVenta(data) {
+  return llamadaAPI("post", data, API_VENTAS);
 }

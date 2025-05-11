@@ -1,4 +1,5 @@
-<script>import axios from 'axios';
+<script>
+import { getClientes, getVehiculos, postVenta } from '@/stores/api-service';
 
 export default {
     data() {
@@ -18,8 +19,8 @@ export default {
     methods: {
         async cargarDatos() {
             const [resClientes, resVehiculos] = await Promise.all([
-                axios.get('http://localhost:8083/api/clientes'),
-                axios.get('http://localhost:8083/api/vehiculos')
+                getClientes(),
+                getVehiculos()
             ]);
             this.clientes = resClientes.data._embedded.clientes.map(c => ({
                 ...c,
@@ -44,7 +45,7 @@ export default {
                 regimen: this.venta.regimen,
                 fechaFinGarantia: this.venta.fechaFinGarantia
             };
-            await axios.post('http://localhost:8083/api/ventas', datos);
+            await postVenta(datos);
             this.$router.push('/transacciones');
         },
         cancelar() {
@@ -69,7 +70,7 @@ export default {
                             {{ c.cif }} - {{ c.nombre }} {{ c.primerApellido }}
                         </option>
                     </select>
-                </div>                
+                </div>
             </div>
             <div class="row mb-1">
                 <div class="col-md-6">
@@ -79,7 +80,7 @@ export default {
                             {{ v.marca }} {{ v.modelo }} ({{ v.matricula }})
                         </option>
                     </select>
-                </div>            
+                </div>
             </div>
 
             <div class="row mb-2">
@@ -106,7 +107,8 @@ export default {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold fs-6">Fecha fin de garantía</label>
-                    <input type="datetime-local" v-model="venta.fechaFinGarantia" class="form-control form-control-sm" required />
+                    <input type="datetime-local" v-model="venta.fechaFinGarantia" class="form-control form-control-sm"
+                        required />
                 </div>
             </div>
 
