@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const host = 'http://localhost:8083/';
 const API_CLIENTES = host + "api/clientes";
+const API_VEHICULOS = host + "api/vehiculos";
 
 export function cambiarHttpPorHttps(enlace) {
     return enlace.replace(/^http:/, 'https:');
@@ -31,5 +32,18 @@ export function deleteCliente(href) {
     return llamadaAPI("delete", null, href);
   }  
 export function updateCliente(href, data) {
+    return llamadaAPI("put", data, href);
+}
+
+export function getVehiculos() {
+  return llamadaAPI("get", null, API_VEHICULOS);
+}
+export function postVehiculo(data) {
+    return llamadaAPI("post", data, API_VEHICULOS)
+}
+export function deleteVehiculo(href) {
+    return llamadaAPI("delete", null, href);
+  }  
+export function updateVehiculo(href, data) {
     return llamadaAPI("put", data, href);
 }

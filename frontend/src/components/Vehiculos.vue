@@ -1,46 +1,40 @@
 <script>
-import { onMounted, ref } from 'vue';
 import { useVehiculoStore } from '@/stores/vehiculoStore';
-import { storeToRefs } from 'pinia';
+import { mapState } from 'pinia';
 import { Modal } from 'bootstrap';
 
 export default {
-  setup() {
-    const store = useVehiculoStore();
-    const { vehiculos, cargando, error } = storeToRefs(store);
-
-    const formulario = ref({
-      matricula: '',
-      bastidor: '',
-      marca: '',
-      modelo: '',
-      color: '',
-      fechaMatriculacion: '',
-      condicionAdquisicion: ''
-    });
-
-    const vehiculoEditando = ref(null);
-
-    const editarVehiculo = (vehiculo) => {
-      vehiculoEditando.value = vehiculo;
-      formulario.value = { ...vehiculo };
-      const modalEl = document.getElementById('vehiculoModal');
-      const modal = Modal.getOrCreateInstance(modalEl);
-      modal.show();
+  data() {
+    return {
+      formulario: {
+        matricula: '',
+        bastidor: '',
+        marca: '',
+        modelo: '',
+        color: '',
+        fechaMatriculacion: '',
+        condicionAdquisicion: ''
+      },
+      vehiculoEditando: null
     };
-
-    const guardarVehiculo = async () => {
+  },
+  computed: {
+    ...mapState(useVehiculoStore, ['vehiculos', 'cargando', 'error'])
+  },
+  methods: {
+    async guardarVehiculo() {
       try {
-        console.log(" Enviando vehículo:", formulario.value);
-
-        if (vehiculoEditando.value) {
-          const vehiculoActualizado = { ...formulario.value, _links: vehiculoEditando.value._links };
-          await store.editarVehiculo(vehiculoActualizado);
+        if (this.vehiculoEditando) {
+          const vehiculoActualizado = {
+            ...this.formulario,
+            _links: this.vehiculoEditando._links
+          };
+          await this.$vehiculoStore.editarVehiculo(vehiculoActualizado);
         } else {
-          await store.crearVehiculo({ ...formulario.value });
+          await this.$vehiculoStore.crearVehiculo({ ...this.formulario });
         }
 
-        formulario.value = {
+        this.formulario = {
           matricula: '',
           bastidor: '',
           marca: '',
@@ -54,35 +48,39 @@ export default {
         const modal = Modal.getInstance(modalEl);
         if (modal) modal.hide();
 
-      } catch (error) {
-        console.error('Error al guardar vehículo:', error);
-      }
-    };
+        this.vehiculoEditando = null;
 
-    const eliminarVehiculo = async (id) => {
+      } catch (e) {
+        console.error("Error al guardar vehículo:", e);
+      }
+    },
+    editarVehiculo(vehiculo) {
+      this.vehiculoEditando = vehiculo;
+      this.formulario = {
+        matricula: vehiculo.matricula || '',
+        bastidor: vehiculo.bastidor || '',
+        marca: vehiculo.marca || '',
+        modelo: vehiculo.modelo || '',
+        color: vehiculo.color || '',
+        fechaMatriculacion: vehiculo.fechaMatriculacion || '',
+        condicionAdquisicion: vehiculo.condicionAdquisicion || ''
+      };
+      const modalEl = document.getElementById('vehiculoModal');
+      const modal = Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    },
+    async eliminarVehiculo(id) {
       if (confirm('¿Estás seguro de que deseas eliminar este vehículo?')) {
-        await store.eliminarVehiculo(id);
+        await this.$vehiculoStore.eliminarVehiculo(id);
       }
-    };
-
-    onMounted(() => {
-      store.cargarVehiculos();
-    });
-
-    const formatFecha = (fecha) => {
+    },
+    formatFecha(fecha) {
       return fecha ? new Date(fecha).toLocaleDateString('es-ES') : '';
-    };
-
-    return {
-      vehiculos,
-      cargando,
-      error,
-      formatFecha,
-      formulario,
-      guardarVehiculo,
-      eliminarVehiculo,
-      editarVehiculo
-    };
+    }
+  },
+  created() {
+    this.$vehiculoStore = useVehiculoStore();
+    this.$vehiculoStore.cargarVehiculos();
   }
 };
 </script>

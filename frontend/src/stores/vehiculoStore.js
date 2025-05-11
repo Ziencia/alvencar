@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import { getVehiculos, postVehiculo, deleteVehiculo, updateVehiculo } from './api-service';
 
 export const useVehiculoStore = defineStore('vehiculo', {
   state: () => ({
@@ -12,57 +12,43 @@ export const useVehiculoStore = defineStore('vehiculo', {
       this.cargando = true;
       this.error = null;
       try {
-        const res = await axios.get('http://localhost:8083/api/vehiculos');
+        const res = await getVehiculos();
         this.vehiculos = res.data._embedded?.vehiculos || [];
       } catch (e) {
         this.error = 'Error al cargar vehículos';
-        console.error(e);
       } finally {
         this.cargando = false;
       }
     },
-
     async crearVehiculo(vehiculo) {
       try {
-        const res = await axios.post('http://localhost:8083/api/vehiculos', vehiculo);
+        const res = await postVehiculo(vehiculo);
         this.vehiculos.push(res.data);
       } catch (e) {
-        console.error("Error al crear vehículo:", e);
         this.error = 'No se pudo crear el vehículo';
       }
     },
-
     async eliminarVehiculo(vehiculo) {
       try {
-        const id = vehiculo._links?.self?.href.split('/').pop();
-
-        if (!id) throw new Error("No se pudo extraer el ID del vehículo");
-    
-        await axios.delete(`http://localhost:8083/api/vehiculos/${id}`);
-        this.vehiculos = this.vehiculos.filter(v => extraerIdDesdeUrl(v._links.self.href) !== id);
+        const url = vehiculo._links.self.href;
+        await deleteVehiculo(url);
+        this.vehiculos = this.vehiculos.filter(v => v._links.self.href !== url);
       } catch (e) {
-        console.error('Error al eliminar vehículo:', e);
         this.error = 'No se pudo eliminar el vehículo';
       }
     },
-
     async editarVehiculo(vehiculo) {
       try {
         const url = vehiculo._links.self.href;
-        const res = await axios.put(url, vehiculo);
-
+        const { _links, ...vehiculoSinLinks } = vehiculo;
+        const res = await updateVehiculo(url, vehiculoSinLinks);
         const index = this.vehiculos.findIndex(v => v._links.self.href === url);
         if (index !== -1) {
           this.vehiculos[index] = res.data;
         }
       } catch (e) {
-        console.error("Error al editar vehículo:", e);
         this.error = "No se pudo editar el vehículo";
       }
     }
   }
 });
-
-function extraerIdDesdeUrl(url) {
-  return url.split('/').pop();
-}
