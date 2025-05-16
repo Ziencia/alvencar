@@ -15,7 +15,8 @@ export default {
         fechaMatriculacion: '',
         condicionAdquisicion: ''
       },
-      vehiculoEditando: null
+      vehiculoEditando: null,
+      vehiculoEliminando: null
     };
   },
   computed: {
@@ -29,9 +30,9 @@ export default {
             ...this.formulario,
             _links: this.vehiculoEditando._links
           };
-          await this.$vehiculoStore.editarVehiculo(vehiculoActualizado);
+          await this.vehiculoStore.editarVehiculo(vehiculoActualizado);
         } else {
-          await this.$vehiculoStore.crearVehiculo({ ...this.formulario });
+          await this.vehiculoStore.crearVehiculo({ ...this.formulario });
         }
 
         this.formulario = {
@@ -69,18 +70,31 @@ export default {
       const modal = Modal.getOrCreateInstance(modalEl);
       modal.show();
     },
-    async eliminarVehiculo(id) {
-      if (confirm('¿Estás seguro de que deseas eliminar este vehículo?')) {
-        await this.$vehiculoStore.eliminarVehiculo(id);
-      }
+    solicitarEliminacion(vehiculo) {
+      this.vehiculoEliminando = vehiculo;
+      const modalEl = document.getElementById('confirmarEliminarVehiculo');
+      const modal = Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    },
+    async eliminarVehiculo(vehiculo) {
+      const modalEl = document.getElementById('confirmarEliminarVehiculo');
+      const modal = Modal.getOrCreateInstance(modalEl);
+      modal.hide();
+      this.quitarFocoModal();
+      await this.vehiculoStore.eliminarVehiculo(vehiculo);
     },
     formatFecha(fecha) {
       return fecha ? new Date(fecha).toLocaleDateString('es-ES') : '';
-    }
+    },
+    quitarFocoModal() {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+    },
   },
   created() {
-    this.$vehiculoStore = useVehiculoStore();
-    this.$vehiculoStore.cargarVehiculos();
+    this.vehiculoStore = useVehiculoStore();
+    this.vehiculoStore.cargarVehiculos();
   }
 };
 </script>
@@ -90,11 +104,9 @@ export default {
   <div class="container mt-5">
     <h2 class="mb-4 text-primary">🚗 Listado de Vehículos</h2>
 
-    <!-- Mensajes de carga y error -->
     <div v-if="cargando" class="alert alert-info">Cargando vehículos...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
-    <!-- Conteo -->
     <div class="mb-3">
       <strong>Vehículos cargados:</strong> {{ vehiculos.length }}
     </div>
@@ -105,7 +117,7 @@ export default {
     <div class="container mt-4">
 
       <div class="row">
-        <div class="col-12 mb-4" v-for="vehiculo in vehiculos" :key="vehiculo.id">
+        <div class="col-md-6 col-lg-4 mb-4" v-for="vehiculo in vehiculos" :key="vehiculo.id">
           <div class="card shadow-sm">
             <div class="card-body">
               <h5 class="card-title"> Vehículo: {{ vehiculo.matricula }}</h5>
@@ -118,23 +130,31 @@ export default {
                 <li class="list-group-item"><strong>Condición Adquisición:</strong> {{ vehiculo.condicionAdquisicion }}
                 </li>
               </ul>
-              <div class="d-flex justify-content-end gap-2">
-                <button class="btn btn-sm btn-success" @click="">Transacciones</button>
-                <button class="btn btn-sm btn-primary" @click="editarVehiculo(vehiculo)">Editar</button>
-                <button class="btn btn-sm btn-danger" @click="eliminarVehiculo(vehiculo)">Eliminar</button>
+              <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
+                <button class="btn btn-sm btn-outline-success" @click="" aria-label="Buscar transacciones">
+                  <i class="bi bi-search"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" @click="editarVehiculo(vehiculo)"
+                  aria-label="Editar vehículo">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(vehiculo)"
+                  aria-label="Eliminar vehículo">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
               </div>
+
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Sin resultados -->
+
     <div v-if="vehiculos.length === 0" class="text-center text-muted">
       No hay vehiculos disponibles.
     </div>
   </div>
 
-  <!-- Modal para crear/editar vehículo -->
   <div class="modal fade" id="vehiculoModal" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -183,6 +203,29 @@ export default {
               <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancelar</button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirmarEliminarVehiculo" tabindex="-1" aria-labelledby="confirmarEliminarVehiculoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmarEliminarVehiculoLabel">Eliminar vehículo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que desea eliminar el vehículo?</p>
+          <p class="alert alert-warning text-danger fw-bold">Si elimina el vehículo, se borraran las transacciones
+            asociadas al mismo.</p>
+          <p>Vehiculo: {{ vehiculoEliminando?.matricula }}, {{ vehiculoEliminando?.marca }}-{{
+            vehiculoEliminando?.modelo }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" @click="eliminarVehiculo(vehiculoEliminando)">Eliminar</button>
         </div>
       </div>
     </div>

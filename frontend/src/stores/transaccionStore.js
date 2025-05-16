@@ -80,10 +80,9 @@ export const useTransaccionStore = defineStore('transaccion', {
     async eliminarTransaccion(transaccion) {
       try {
         const id = extraerIdDesdeUrl(transaccion._links.self.href);
-
         if (!id) throw new Error("No se pudo extraer el ID de la transaccion");
-
         await deleteTransaccionPorId(id);
+        this.cargarTransacciones();
       } catch (e) {
         console.error('Error al eliminar cliente:', e);
         this.error = 'No se pudo eliminar el cliente';

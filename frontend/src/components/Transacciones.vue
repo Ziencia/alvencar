@@ -1,5 +1,6 @@
 <script>
 import { useTransaccionStore } from '@/stores/transaccionStore';
+import { mapState } from 'pinia';
 import { Modal } from 'bootstrap';
 import dayjs from 'dayjs';
 
@@ -7,25 +8,24 @@ export default {
   data() {
     return {
       facturaSeleccionada: null,
+      transaccionEliminando: null,
       facturaModal: null,
       transaccionStore: useTransaccionStore()
     };
   },
   computed: {
-    ventas() {
-      return this.transaccionStore.ventas || [];
-    },
-    alquileres() {
-      return this.transaccionStore.alquileres || [];
-    },
-    cargando() {
-      return this.transaccionStore.cargando;
-    },
-    error() {
-      return this.transaccionStore.error;
-    },
+    ...mapState(useTransaccionStore, ['ventas', 'alquileres', 'cargando', 'error']),
     totalTransacciones() {
       return this.ventas.length + this.alquileres.length;
+    }
+  },
+  mounted() {
+    this.transaccionStore = useTransaccionStore();
+    this.transaccionStore.cargarTransacciones();
+
+    const modalElement = document.getElementById('facturaModal');
+    if (modalElement) {
+      this.facturaModal = new Modal(modalElement, { backdrop: 'static' });
     }
   },
   methods: {
@@ -51,22 +51,24 @@ export default {
       await this.transaccionStore.crearFactura(factura);
       this.facturaModal.hide();
     },
-    async eliminarTransaccion(venta) {
-      if (confirm('¿Estás seguro de que deseas eliminar esta venta?')) {
-        await this.transaccionStore.eliminarTransaccion(venta);
-        await this.transaccionStore.cargarTransacciones();
+    solicitarEliminacion(transaccion) {
+      this.transaccionEliminando = transaccion;
+      const modalEl = document.getElementById('confirmarEliminarTransaccion');
+      const modal = Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    },
+    async eliminarTransaccion(transaccion) {
+      const modalEl = document.getElementById('confirmarEliminarTransaccion');
+      const modal = Modal.getOrCreateInstance(modalEl);
+      modal.hide();
+      this.quitarFocoModal();
+      await this.transaccionStore.eliminarTransaccion(transaccion);
+    },
+    quitarFocoModal() {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
       }
-    }
-
-  },
-  mounted() {
-    this.transaccionStore = useTransaccionStore();
-    this.transaccionStore.cargarTransacciones();
-
-    const modalElement = document.getElementById('facturaModal');
-    if (modalElement) {
-      this.facturaModal = new Modal(modalElement, { backdrop: 'static' });
-    }
+    },
   }
 };
 </script>
@@ -111,7 +113,7 @@ export default {
       <div class="tab-pane fade show active" id="ventas" role="tabpanel">
         <div v-if="ventas.length === 0" class="text-muted">No hay ventas registradas.</div>
         <div class="row" v-else>
-          <div class="col-12 mb-4" v-for="(venta, i) in ventas" :key="i">
+          <div class="col-8 mb-4 mx-auto" v-for="(venta, i) in ventas" :key="i">
             <div class="card h-100 shadow-sm">
               <div class="card-body">
                 <h5 class="card-title text-primary">Venta por importe de {{ venta.importe }} €.</h5>
@@ -134,7 +136,7 @@ export default {
                   Generar Factura
                 </button>
                 <div class="d-flex justify-content-end gap-2">
-                  <button class="btn btn-sm btn-danger" @click="eliminarTransaccion(venta)">Eliminar</button>
+                  <button class="btn btn-sm btn-danger" @click="solicitarEliminacion(venta)">Eliminar</button>
                 </div>
               </div>
             </div>
@@ -213,4 +215,26 @@ export default {
     </div>
   </div>
 
+  <div class="modal fade" id="confirmarEliminarTransaccion" tabindex="-1"
+    aria-labelledby="confirmarEliminarTransaccionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmarEliminarTransaccionLabel">Eliminar transacción</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que desea eliminar la transacción?</p>
+          <p class="alert alert-warning text-danger fw-bold">La eliminación sera irreversible.</p>
+          <p>Transacción de venta por valor de {{ transaccionEliminando?.importe }} para {{
+            transaccionEliminando?.cliente?.cif }} y {{ transaccionEliminando?.vehiculo?.matricula }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger"
+            @click="eliminarTransaccion(transaccionEliminando)">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
