@@ -82,27 +82,29 @@ export default {
 </script>
 
 <template>
-
   <div class="container mt-4">
     <h3 class="mb-4 text-dark">
-      🫂 Listado de Clientes
+      🫂 Listado de clientes
       <small class="text-muted">(Actualmente hay {{ clientes.length }} clientes)</small>
     </h3>
 
-
     <div v-if="cargando" class="alert alert-info">Cargando clientes...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#clienteModal">
-      ➕ Añadir Cliente
-    </button>
+
+    <div class="d-flex mb-3">
+      <button class="btn btn-outline-dark btn-lg mb-3 ms-auto" data-bs-toggle="modal" data-bs-target="#clienteModal">
+        ➕ Añadir cliente
+      </button>
+    </div>
 
     <div class="row g-4">
       <div class="col-md-6 col-lg-4" v-for="cliente in clientes" :key="cliente.id">
         <div class="card shadow-sm h-100">
           <div class="card-body">
-            <h5 class="card-title text-primary">{{ cliente.nombre }} {{ cliente.primerApellido }} {{
+            <h5 class="card-title">{{ cliente.nombre }} {{ cliente.primerApellido }} {{
               cliente.segundoApellido }}
             </h5>
+            <div class="border-top my-3"></div>
             <p class="card-text mb-1"><strong>CIF:</strong> {{ cliente.cif }}</p>
             <p class="card-text mb-1"><strong>Dirección:</strong> {{ cliente.direccion }}</p>
             <p class="card-text mb-1"><strong>Teléfono:</strong> {{ cliente.telefono }}</p>

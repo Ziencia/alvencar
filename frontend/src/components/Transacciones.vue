@@ -75,35 +75,33 @@ export default {
 
 <template>
   <div class="container mt-4">
-    <h2 class="mb-4 text-primary">📚 Listado de Transacciones</h2>
+    <h3 class="mb-4 text-dark">
+      📚 Listado de Transacciones
+      <small class="text-muted">(Actualmente hay {{ totalTransacciones }} transacciones)</small>
+    </h3>
 
     <!-- Mensajes de carga y error -->
     <div v-if="cargando" class="alert alert-info">Cargando clientes...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
-    <!-- Conteo -->
-    <div class="mb-3">
-      <strong>Transacciones cargadas:</strong> {{ totalTransacciones }}
-    </div>
-
-    <div class="mb-3 d-flex gap-2">
-      <button @click="$router.push({ name: 'venta' })" class="btn btn-primary">
-        📑 Añadir Venta
+    <div class="d-flex mb-3">
+      <button @click="$router.push({ name: 'venta' })" class="btn btn-outline-dark btn-lg mb-3 ms-auto">
+        ➕ Añadir Venta
       </button>
-      <button class="btn btn-primary">
-        🏪 Añadir Alquiler
+      <button class="btn btn-outline-dark btn-lg mb-3 ms-3">
+        ➕ Añadir Alquiler
       </button>
     </div>
 
     <!-- Tabs Bootstrap -->
     <ul class="nav nav-tabs mb-4" id="transaccionTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="ventas-tab" data-bs-toggle="tab" data-bs-target="#ventas" type="button"
-          role="tab">Ventas</button>
+        <button class="nav-link active text-dark fs-5" id="ventas-tab" data-bs-toggle="tab" data-bs-target="#ventas" type="button"
+          role="tab">VENTA</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="alquileres-tab" data-bs-toggle="tab" data-bs-target="#alquileres" type="button"
-          role="tab">Alquileres</button>
+        <button class="nav-link text-dark fs-5" id="alquileres-tab" data-bs-toggle="tab" data-bs-target="#alquileres" type="button"
+          role="tab">ALQUILER</button>
       </li>
     </ul>
 
@@ -116,27 +114,30 @@ export default {
           <div class="col-8 mb-4 mx-auto" v-for="(venta, i) in ventas" :key="i">
             <div class="card h-100 shadow-sm">
               <div class="card-body">
-                <h5 class="card-title text-primary">Venta por importe de {{ venta.importe }} €.</h5>
-                <p>Realizada el: {{ formatearFecha(venta.fechaHoraEntrega) }}</p>
-                <p>Régimen: {{ venta.regimen }}</p>
-                <p>Fin de Garantía: {{ formatearFecha(venta.fechaFinGarantia) }}</p>
+                <h5 class="card-title">Venta por importe de {{ venta.importe }} €.</h5>
+                <div class="border-top my-3"></div>
+                <p><strong>Realizada el:</strong> {{ formatearFecha(venta.fechaHoraEntrega) }}</p>
+                <p><strong>Régimen:</strong> {{ venta.regimen }}</p>
+                <p><strong>Fin de Garantía:</strong> {{ formatearFecha(venta.fechaFinGarantia) }}</p>
+                <p><strong>Vehículo asociado:</strong>
+                  {{ venta.vehiculo?.marca }} {{ venta.vehiculo?.modelo }}, con matrícula <strong>{{
+                    venta.vehiculo?.matricula }}</strong> </p>
+                <p><strong>Datos del cliente asociado: </strong>
+                   {{ venta.cliente?.nombre }} {{
+                    venta.cliente?.primerApellido }} {{ venta.cliente?.segundoApellido }} (<strong>{{ venta.cliente?.cif }}</strong>)</p>
 
-                <hr />
+                <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
 
-                <p><strong>Datos del vehículo asociado:</strong></p>
-                <p> {{ venta.vehiculo?.marca }} {{ venta.vehiculo?.modelo }}, con matrícula <strong>{{
-                  venta.vehiculo?.matricula }}</strong> </p>
-
-                <hr />
-                <p><strong>Datos del cliente asociado:</strong></p>
-                <p><strong>{{ venta.cliente?.cif }}</strong>, {{ venta.cliente?.nombre }} {{
-                  venta.cliente?.primerApellido }} {{ venta.cliente?.segundoApellido }}</p>
-
-                <button class="btn btn-outline-primary mt-3" @click="abrirModalFactura(venta)">
-                  Generar Factura
-                </button>
-                <div class="d-flex justify-content-end gap-2">
-                  <button class="btn btn-sm btn-danger" @click="solicitarEliminacion(venta)">Eliminar</button>
+                  <button class="btn btn-sm btn-outline-primary" @click="abrirModalFactura(venta)"
+                    aria-labelledby="Generar factura">
+                    <i class="bi bi-envelope-paper-fill"></i>
+                  </button>
+                  <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(venta)"
+                      aria-labelledby="Eliminar vehículo">
+                      <i class="bi bi-trash-fill"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

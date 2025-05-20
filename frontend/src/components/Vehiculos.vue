@@ -99,54 +99,49 @@ export default {
 };
 </script>
 
-
 <template>
-  <div class="container mt-5">
-    <h2 class="mb-4 text-primary">🚗 Listado de Vehículos</h2>
+  <div class="container mt-4">
+    <h3 class="mb-4 text-dark">
+      🚗 Listado de vehículos
+      <small class="text-muted">(Actualmente hay {{ vehiculos.length }} vehículos)</small>
+    </h3>
 
     <div v-if="cargando" class="alert alert-info">Cargando vehículos...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
-    <div class="mb-3">
-      <strong>Vehículos cargados:</strong> {{ vehiculos.length }}
+    <div class="d-flex mb-3">
+      <button class="btn btn-outline-dark btn-lg mb-3 ms-auto" data-bs-toggle="modal" data-bs-target="#vehiculoModal">
+        ➕ Añadir vehículo
+      </button>
     </div>
 
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#vehiculoModal">
-      ➕ Añadir Vehículo
-    </button>
-    <div class="container mt-4">
-
-      <div class="row">
-        <div class="col-md-6 col-lg-4 mb-4" v-for="vehiculo in vehiculos" :key="vehiculo.id">
-          <div class="card shadow-sm">
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4" v-for="vehiculo in vehiculos" :key="vehiculo.id">
+          <div class="card shadow-sm h-100">
             <div class="card-body">
-              <h5 class="card-title"> Vehículo: {{ vehiculo.matricula }}</h5>
+              <h5 class="card-title"> {{ vehiculo.matricula }}</h5>
               <h6 class="card-subtitle mb-2 text-muted">{{ vehiculo.marca }} - {{ vehiculo.modelo }}</h6>
-              <ul class="list-group list-group-flush mb-3">
-                <li class="list-group-item"><strong>Bastidor:</strong> {{ vehiculo.bastidor }}</li>
-                <li class="list-group-item"><strong>Color:</strong> {{ vehiculo.color }}</li>
-                <li class="list-group-item"><strong>Fecha Matriculación:</strong> {{
-                  formatFecha(vehiculo.fechaMatriculacion) }}</li>
-                <li class="list-group-item"><strong>Condición Adquisición:</strong> {{ vehiculo.condicionAdquisicion }}
-                </li>
-              </ul>
+              <div class="border-top my-3"></div>
+                <p class="card-text mb-1"><strong>Bastidor:</strong> {{ vehiculo.bastidor }}</p>
+                <p class="card-text mb-1"><strong>Color:</strong> {{ vehiculo.color }}</p>
+                <p class="card-text mb-1"><strong>Fecha Matriculación:</strong> {{
+                  formatFecha(vehiculo.fechaMatriculacion) }}</p>
+                <p class="card-text mb-1"><strong>Condición Adquisición:</strong> {{ vehiculo.condicionAdquisicion }}</p>
+                </div>
               <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
-                <button class="btn btn-sm btn-outline-success" @click="" aria-label="Buscar transacciones">
+                <button class="btn btn-sm btn-outline-success" @click="" aria-labelledby="Buscar transacciones">
                   <i class="bi bi-search"></i>
                 </button>
                 <button class="btn btn-sm btn-outline-primary" @click="editarVehiculo(vehiculo)"
-                  aria-label="Editar vehículo">
+                  aria-labelledby="Editar vehículo">
                   <i class="bi bi-pencil-fill"></i>
                 </button>
                 <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(vehiculo)"
-                  aria-label="Eliminar vehículo">
+                  aria-labelledby="Eliminar vehículo">
                   <i class="bi bi-trash-fill"></i>
                 </button>
               </div>
-
-            </div>
           </div>
-        </div>
       </div>
     </div>
 

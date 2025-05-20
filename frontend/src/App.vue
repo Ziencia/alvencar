@@ -10,7 +10,6 @@ import Footer from '@/components/Footer.vue'
       <Header></Header>
       <NavBar></NavBar>
       <main><router-view></router-view></main>
-      <Footer></Footer>
     </div>
   </div>
 </template>
@@ -28,18 +27,13 @@ import Footer from '@/components/Footer.vue'
   flex-direction: column;
   min-height: 100vh;
 }
-
-navbar {
-  background: lightskyblue;
-}
-
-header, footer {
-  height: 30px;
-  background: rgb(5, 94, 94)
+header {
+  height: 20px;
+  background: #313715
 }
 
 main {
   flex: 1;
-  background: rgb(70, 156, 145);
+  background: #DFF2D8
 }
 </style>
