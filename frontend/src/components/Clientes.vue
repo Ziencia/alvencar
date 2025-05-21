@@ -1,48 +1,47 @@
 <script>
 import { useClienteStore } from '@/stores/clienteStore';
-import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { mapState } from 'pinia';
 import { Modal } from 'bootstrap';
 
 export default {
-  setup() {
-    const clienteStore = useClienteStore();
-    const { clientes, cargando, error } = storeToRefs(clienteStore);
-
-    onMounted(() => {
-      clienteStore.cargarClientes();
-    });
-
-    const nuevoCliente = ref({
-      cif: '',
-      nombre: '',
-      primerApellido: '',
-      segundoApellido: '',
-      direccion: '',
-      telefono: ''
-    });
-
-    const clienteEditando = ref(null);
-
-    const editarCliente = (cliente) => {
-      clienteEditando.value = cliente;
-      nuevoCliente.value = { ...cliente };
+  data() {
+    return {
+      nuevoCliente: {
+        cif: '',
+        nombre: '',
+        primerApellido: '',
+        segundoApellido: '',
+        direccion: '',
+        telefono: ''
+      },
+      clienteEditando: null,
+      clienteEliminando: null
+    };
+  },
+  computed: {
+    ...mapState(useClienteStore, ['clientes', 'cargando', 'error'])
+  },
+  created() {
+    this.clienteStore = useClienteStore();
+    this.clienteStore.cargarClientes();
+  },
+  methods: {
+    editarCliente(cliente) {
+      this.clienteEditando = cliente;
+      this.nuevoCliente = { ...cliente };
       const modalEl = document.getElementById('clienteModal');
       const modal = Modal.getOrCreateInstance(modalEl);
       modal.show();
-    };
-
-    const guardarCliente = async () => {
+    },
+    async guardarCliente() {
       try {
-        
-        if (clienteEditando.value) {
-          const clienteActualizado = { ...nuevoCliente.value, _links: clienteEditando.value._links };
-          await clienteStore.editarCliente(clienteActualizado);
+        if (this.clienteEditando) {
+          const clienteActualizado = { ...this.nuevoCliente, _links: this.clienteEditando._links };
+          await this.clienteStore.editarCliente(clienteActualizado);
         } else {
-          await clienteStore.crearCliente({ ...nuevoCliente.value });
+          await this.clienteStore.crearCliente({ ...this.nuevoCliente });
         }
-
-        nuevoCliente.value = {
+        this.nuevoCliente = {
           cif: '',
           nombre: '',
           primerApellido: '',
@@ -54,118 +53,146 @@ export default {
         const modalEl = document.getElementById('clienteModal');
         const modal = Modal.getInstance(modalEl);
         if (modal) modal.hide();
-
+        this.quitarFocoModal();
       } catch (error) {
         console.error('Error al guardar cliente:', error);
       }
-    };
+    },
+    solicitarEliminacion(cliente) {
+      this.clienteEliminando = cliente;
+      const modalEl = document.getElementById('confirmarEliminarCliente');
+      const modal = Modal.getOrCreateInstance(modalEl);
+      modal.show();
+    },
+    async eliminarCliente(cliente) {
+      const modalEl = document.getElementById('confirmarEliminarCliente');
+      const modal = Modal.getOrCreateInstance(modalEl);
+      modal.hide();
+      this.quitarFocoModal();
+      await this.clienteStore.eliminarCliente(cliente);
 
-    const eliminarCliente = async (id) => {
-      if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-        await clienteStore.eliminarCliente(id);
+    },
+    quitarFocoModal() {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
       }
-    };
-
-    return {
-      clientes,
-      cargando, 
-      error,
-      nuevoCliente,
-      guardarCliente,
-      eliminarCliente,
-      editarCliente
-    };
+    },
   }
 };
 </script>
 
 <template>
+  <div class="container mt-4">
+    <h3 class="mb-4 text-dark">
+      🫂 Listado de clientes
+      <small class="text-muted">(Actualmente hay {{ clientes.length }} clientes)</small>
+    </h3>
 
-  <div class="container mt-5">
-    <h2 class="mb-4 text-primary">👤 Listado de Clientes</h2>
-
-    <!-- Mensajes de carga y error -->
     <div v-if="cargando" class="alert alert-info">Cargando clientes...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
-    <!-- Conteo -->
-    <div class="mb-3">
-      <strong>Clientes cargados:</strong> {{ clientes.length }}
+    <div class="d-flex mb-3">
+      <button class="btn btn-outline-dark btn-lg mb-3 ms-auto" data-bs-toggle="modal" data-bs-target="#clienteModal">
+        ➕ Añadir cliente
+      </button>
     </div>
-
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#clienteModal">
-      ➕ Añadir Cliente
-    </button>
 
     <div class="row g-4">
       <div class="col-md-6 col-lg-4" v-for="cliente in clientes" :key="cliente.id">
         <div class="card shadow-sm h-100">
           <div class="card-body">
-            <h5 class="card-title text-primary">{{ cliente.nombre }} {{ cliente.primerApellido }} {{ cliente.segundoApellido }}
+            <h5 class="card-title">{{ cliente.nombre }} {{ cliente.primerApellido }} {{
+              cliente.segundoApellido }}
             </h5>
+            <div class="border-top my-3"></div>
             <p class="card-text mb-1"><strong>CIF:</strong> {{ cliente.cif }}</p>
             <p class="card-text mb-1"><strong>Dirección:</strong> {{ cliente.direccion }}</p>
             <p class="card-text mb-1"><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
           </div>
           <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
-            <button class="btn btn-sm btn-outline-primary" @click="editarCliente(cliente)">
+            <button class="btn btn-sm btn-outline-primary" @click="editarCliente(cliente)"
+              aria-labelledby="Editar Cliente">
               <i class="bi bi-pencil-fill"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" @click="eliminarCliente(cliente)">
+            <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(cliente)"
+              aria-labelledby="Eliminar Cliente">
               <i class="bi bi-trash-fill"></i>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Sin resultados -->
       <div v-if="clientes.length === 0" class="text-center text-muted">
         No hay clientes disponibles.
       </div>
     </div>
 
     <div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content shadow">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="clienteModalLabel">Nuevo Cliente</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="clienteModalLabel">Nuevo Cliente</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+              aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="guardarCliente">
+              <div class="mb-3">
+                <label class="form-label">CIF</label>
+                <input v-model="nuevoCliente.cif" type="text" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input v-model="nuevoCliente.nombre" type="text" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Primer Apellido</label>
+                <input v-model="nuevoCliente.primerApellido" type="text" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Segundo Apellido</label>
+                <input v-model="nuevoCliente.segundoApellido" type="text" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Dirección</label>
+                <input v-model="nuevoCliente.direccion" type="text" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Teléfono</label>
+                <input v-model="nuevoCliente.telefono" type="text" class="form-control" />
+              </div>
+              <div class="text-end">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirmarEliminarCliente" tabindex="-1" aria-labelledby="confirmarEliminarClienteLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmarEliminarClienteLabel">Eliminar cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="guardarCliente">
-            <div class="mb-3">
-              <label class="form-label">CIF</label>
-              <input v-model="nuevoCliente.cif" type="text" class="form-control" required />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Nombre</label>
-              <input v-model="nuevoCliente.nombre" type="text" class="form-control" required />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Primer Apellido</label>
-              <input v-model="nuevoCliente.primerApellido" type="text" class="form-control" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Segundo Apellido</label>
-              <input v-model="nuevoCliente.segundoApellido" type="text" class="form-control" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Dirección</label>
-              <input v-model="nuevoCliente.direccion" type="text" class="form-control" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Teléfono</label>
-              <input v-model="nuevoCliente.telefono" type="text" class="form-control" />
-            </div>
-            <div class="text-end">
-              <button type="submit" class="btn btn-success">Guardar</button>
-              <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancelar</button>
-            </div>
-          </form>
+          <p>¿Estás seguro de que desea eliminar al cliente?</p>
+          <p class="alert alert-warning text-danger fw-bold">Si elimina al cliente, se borraran las transacciones
+            asociadas al mismo.</p>
+          <p>Cliente: {{ clienteEliminando?.nombre }} {{ clienteEliminando?.primerApellido }} {{
+            clienteEliminando?.segundoApellido }}, con CIF: {{ clienteEliminando?.cif }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" @click="eliminarCliente(clienteEliminando)">Eliminar</button>
         </div>
       </div>
     </div>
-
   </div>
-</div>
 </template>

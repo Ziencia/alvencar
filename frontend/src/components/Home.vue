@@ -43,13 +43,12 @@ export default {
 </script>
 
 <template>
-
-    <div class="container mt-5 mb-5">
+    <div class="container mt-5 mb-5 bg-navbar-dark">
         <div class="row g-4">
-            <!-- Casilla 1: Total clientes -->
-            <div class="col-md-6 col-lg-6">
+            <!-- Casilla-->
+            <div class="col-md-3 col-lg-4">
                 <div
-                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    class="card text-white h-100 shadow-sm d-flex flex-column justify-content-center align-items-center ">
                     <div class="card-body text-center">
                         <i class="bi bi-person-fill display-4 mb-3"></i>
                         <h4>Total de Clientes</h4>
@@ -59,9 +58,9 @@ export default {
             </div>
 
             <!-- Casilla 2 -->
-            <div class="col-md-6 col-lg-6">
+            <div class="col-md-4 col-lg-4">
                 <div
-                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    class="card text-white h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
                         <i class="bi bi-car-front-fill display-4 mb-3"></i>
                         <h4>Total de Vehículos</h4>
@@ -71,9 +70,9 @@ export default {
             </div>
 
             <!-- Casilla 3 -->
-            <div class="col-md-6 col-lg-6">
+            <div class="col-md-4 col-lg-4">
                 <div
-                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    class="card text-white h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
                         <i class="bi bi-piggy-bank-fill display-4 mb-3"></i>
                         <h4>Total de Ventas</h4>
@@ -83,9 +82,9 @@ export default {
             </div>
 
             <!-- Casilla 4 -->
-            <div class="col-md-6 col-lg-6">
+            <div class="col-md-4 col-lg-4">
                 <div
-                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    class="card text-white h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
                         <i class="bi bi-wallet-fill display-4 mb-3"></i>
                         <h4>Total de Alquileres</h4>
@@ -95,9 +94,9 @@ export default {
             </div>
 
             <!-- Casilla 5 -->
-            <div class="col-md-6 col-lg-6">
+            <div class="col-md-4 col-lg-4">
                 <div
-                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    class="card text-white h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
                         <i class="bi bi-currency-euro display-4 mb-3"></i>
                         <h4>Total de Facturas</h4>
@@ -107,9 +106,9 @@ export default {
             </div>
 
             <!-- Casilla 6 -->
-            <div class="col-md-6 col-lg-6">
+            <div class="col-md-4 col-lg-4">
                 <div
-                    class="card text-white bg-primary h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
+                    class="card text-white  h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
                         <i class="bi bi-info-circle display-4 mb-3"></i>
                         <h4>Info:</h4>
@@ -120,3 +119,9 @@ export default {
         </div>
     </div>
 </template>
+
+<style scoped>
+.card{
+    background-color: #7A6263;
+}
+</style>
