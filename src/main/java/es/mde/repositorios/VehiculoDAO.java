@@ -8,8 +8,6 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 import es.mde.entidades.Vehiculo;
 
-
-//@Repository
 @RepositoryRestResource(path = "vehiculos", itemResourceRel = "vehiculo", collectionResourceRel = "vehiculos")
 public interface VehiculoDAO extends JpaRepository<Vehiculo, Long>, VehiculoDAOCustom {
   
@@ -19,4 +17,6 @@ public interface VehiculoDAO extends JpaRepository<Vehiculo, Long>, VehiculoDAOC
     @RestResource(path = "matricula")
     List<Vehiculo> findByMatriculaContaining(String matricula);
 
+    @RestResource(path = "vendido")
+    List<Vehiculo> findByVendido(boolean vendido);
 }

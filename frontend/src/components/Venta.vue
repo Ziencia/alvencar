@@ -1,5 +1,5 @@
 <script>
-import { getClientes, getVehiculos, postVenta } from '@/stores/api-service';
+import { getClientes, getVehiculosNoVendidos, postVenta, updateVehiculo } from '@/stores/api-service';
 
 export default {
     data() {
@@ -27,7 +27,7 @@ export default {
         async cargarDatos() {
             const [resClientes, resVehiculos] = await Promise.all([
                 getClientes(),
-                getVehiculos()
+                getVehiculosNoVendidos()
             ]);
             this.clientes = resClientes.data._embedded.clientes.map(c => ({
                 ...c,
@@ -42,8 +42,9 @@ export default {
 
         async guardarVenta() {
             const clienteURL = this.clientes.find(c => c.id === this.venta.clienteId)._links.self.href;
-            const vehiculoURL = this.vehiculos.find(v => v.id === this.venta.vehiculoId)._links.self.href;
-
+            const vehiculoSeleccionado = this.vehiculos.find(v => v.id === this.venta.vehiculoId);  
+            const vehiculoURL = vehiculoSeleccionado._links.self.href;
+           
             const datos = {
                 cliente: clienteURL,
                 vehiculo: vehiculoURL,
@@ -53,6 +54,12 @@ export default {
                 fechaFinGarantia: this.fechaFinGarantia
             };
             await postVenta(datos);
+
+            const vehiculoVendido = {
+                ...vehiculoSeleccionado,
+                vendido: true
+            };
+            await updateVehiculo(vehiculoURL,vehiculoVendido);
             this.$router.push('/transacciones');
         },
         cancelar() {
