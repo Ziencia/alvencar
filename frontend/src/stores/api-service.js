@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const host = 'https://alvencar-ac4e236c0ceb.herokuapp.com/api/';
+//const host = 'https://alvencar-ac4e236c0ceb.herokuapp.com/api/';
+const host = 'http://localhost:8083/api/';
 const API_CLIENTES = host + "clientes";
 const API_VEHICULOS = host + "vehiculos";
 const API_FACTURAS = host + "facturas";
@@ -40,6 +41,9 @@ export function updateCliente(href, data) {
 
 export function getVehiculos() {
   return llamadaAPI("get", null, API_VEHICULOS);
+}
+export function getVehiculosNoVendidos() {
+  return llamadaAPI("get", null, API_VEHICULOS +  "/search/vendido?vendido=false");
 }
 export function postVehiculo(data) {
     return llamadaAPI("post", data, API_VEHICULOS)
