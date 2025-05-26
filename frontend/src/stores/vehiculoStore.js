@@ -20,6 +20,18 @@ export const useVehiculoStore = defineStore('vehiculo', {
         this.cargando = false;
       }
     },
+    async cargarVehiculosNoVendidos() {
+      this.cargando = true;
+      this.error = null;
+      try {
+        const res = await getVehiculosNoVendidos();
+        this.vehiculos = res.data._embedded?.vehiculos || [];
+      } catch (e) {
+        this.error = 'Error al cargar vehículos';
+      } finally {
+        this.cargando = false;
+      }
+    },
     async crearVehiculo(vehiculo) {
       try {
         const res = await postVehiculo(vehiculo);

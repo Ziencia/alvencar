@@ -34,6 +34,7 @@ public class Vehiculo {
     private String color;
     private LocalDate fechaMatriculacion;
     private String condicionAdquisicion;
+    private boolean vendido;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Transaccion.class, mappedBy = "vehiculo")
 	private Collection<Transaccion> transacciones = new ArrayList<>();
@@ -41,7 +42,7 @@ public class Vehiculo {
     public Vehiculo() {}
 
     public Vehiculo(String matricula, String bastidor, String marca, String modelo,
-                    String color, LocalDate fechaMatriculacion, String condicionAdquisicion) {
+                    String color, LocalDate fechaMatriculacion, String condicionAdquisicion, boolean vendido) {
         this.matricula = matricula;
         this.bastidor = bastidor;
         this.marca = marca;
@@ -49,6 +50,7 @@ public class Vehiculo {
         this.color = color;
         this.fechaMatriculacion = fechaMatriculacion;
         this.condicionAdquisicion = condicionAdquisicion;
+        this.vendido = false;
     }
 
     public Long getId() {
@@ -127,5 +129,12 @@ public class Vehiculo {
 		getTransacciones().add(transaccion);
 		transaccion.setVehiculo(this);
 	}
-    
+
+    public boolean isVendido() {
+        return vendido;
+    }
+
+    public void setVendido(boolean vendido) {
+        this.vendido = vendido;
+    }    
 }

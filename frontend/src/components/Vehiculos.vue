@@ -13,7 +13,8 @@ export default {
         modelo: '',
         color: '',
         fechaMatriculacion: '',
-        condicionAdquisicion: ''
+        condicionAdquisicion: '',
+        vendido: null
       },
       vehiculoEditando: null,
       vehiculoEliminando: null
@@ -21,6 +22,10 @@ export default {
   },
   computed: {
     ...mapState(useVehiculoStore, ['vehiculos', 'cargando', 'error'])
+  },
+  created() {
+    this.vehiculoStore = useVehiculoStore();
+    this.vehiculoStore.cargarVehiculos();
   },
   methods: {
     async guardarVehiculo() {
@@ -42,7 +47,8 @@ export default {
           modelo: '',
           color: '',
           fechaMatriculacion: '',
-          condicionAdquisicion: ''
+          condicionAdquisicion: '',
+          vendido: null
         };
 
         const modalEl = document.getElementById('vehiculoModal');
@@ -64,7 +70,8 @@ export default {
         modelo: vehiculo.modelo || '',
         color: vehiculo.color || '',
         fechaMatriculacion: vehiculo.fechaMatriculacion || '',
-        condicionAdquisicion: vehiculo.condicionAdquisicion || ''
+        condicionAdquisicion: vehiculo.condicionAdquisicion || '',
+        vendido: vehiculo.vendido === true ? true : false
       };
       const modalEl = document.getElementById('vehiculoModal');
       const modal = Modal.getOrCreateInstance(modalEl);
@@ -91,10 +98,6 @@ export default {
         document.activeElement.blur();
       }
     },
-  },
-  created() {
-    this.vehiculoStore = useVehiculoStore();
-    this.vehiculoStore.cargarVehiculos();
   }
 };
 </script>
@@ -116,32 +119,37 @@ export default {
     </div>
 
     <div class="row g-4">
-        <div class="col-md-6 col-lg-4" v-for="vehiculo in vehiculos" :key="vehiculo.id">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"> {{ vehiculo.matricula }}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">{{ vehiculo.marca }} - {{ vehiculo.modelo }}</h6>
-              <div class="border-top my-3"></div>
-                <p class="card-text mb-1"><strong>Bastidor:</strong> {{ vehiculo.bastidor }}</p>
-                <p class="card-text mb-1"><strong>Color:</strong> {{ vehiculo.color }}</p>
-                <p class="card-text mb-1"><strong>Fecha Matriculación:</strong> {{
-                  formatFecha(vehiculo.fechaMatriculacion) }}</p>
-                <p class="card-text mb-1"><strong>Condición Adquisición:</strong> {{ vehiculo.condicionAdquisicion }}</p>
-                </div>
-              <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
-                <button class="btn btn-sm btn-outline-success" @click="" aria-labelledby="Buscar transacciones">
-                  <i class="bi bi-search"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-primary" @click="editarVehiculo(vehiculo)"
-                  aria-labelledby="Editar vehículo">
-                  <i class="bi bi-pencil-fill"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(vehiculo)"
-                  aria-labelledby="Eliminar vehículo">
-                  <i class="bi bi-trash-fill"></i>
-                </button>
-              </div>
+      <div class="col-md-6 col-lg-4" v-for="vehiculo in vehiculos" :key="vehiculo.id">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"> {{ vehiculo.matricula }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ vehiculo.marca }} - {{ vehiculo.modelo }}</h6>
+            <div class="border-top my-3"></div>
+            <p class="card-text mb-1"><strong>Bastidor:</strong> {{ vehiculo.bastidor }}</p>
+            <p class="card-text mb-1"><strong>Color:</strong> {{ vehiculo.color }}</p>
+            <p class="card-text mb-1"><strong>Fecha Matriculación:</strong> {{
+              formatFecha(vehiculo.fechaMatriculacion) }}</p>
+            <p class="card-text mb-1"><strong>Condición Adquisición:</strong> {{ vehiculo.condicionAdquisicion }}</p>
+            <p class="card-text mb-1"><strong>Estado del vehículo: </strong>
+              <span :class="vehiculo.vendido ? 'text-success' : 'text-primary'">
+                {{ vehiculo.vendido ? 'No disponible' : 'Disponible' }}
+              </span>
+            </p>
           </div>
+          <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
+            <button class="btn btn-sm btn-outline-success" @click="" aria-labelledby="Buscar transacciones">
+              <i class="bi bi-search"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-primary" @click="editarVehiculo(vehiculo)"
+              aria-labelledby="Editar vehículo">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(vehiculo)"
+              aria-labelledby="Eliminar vehículo">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -190,6 +198,14 @@ export default {
                   <option value="">Seleccione</option>
                   <option>Compra</option>
                   <option>Leasing</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Estado del vehículo</label>
+                <select v-model="formulario.vendido" class="form-select" required>
+                  <option :value="null">Seleccione</option>
+                  <option :value="true">No disponible</option>
+                  <option :value="false">Disponible</option>
                 </select>
               </div>
             </div>
