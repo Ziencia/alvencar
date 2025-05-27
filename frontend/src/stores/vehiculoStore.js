@@ -2,11 +2,13 @@ import { defineStore } from 'pinia';
 import { getVehiculos, postVehiculo, deleteVehiculo, updateVehiculo } from './api-service';
 
 export const useVehiculoStore = defineStore('vehiculo', {
-  state: () => ({
-    vehiculos: [],
-    cargando: false,
-    error: null
-  }),
+  state() {
+    return {
+      vehiculos: [],
+      cargando: false,
+      error: null
+    };
+  },
   actions: {
     async cargarVehiculos() {
       this.cargando = true;

@@ -3,11 +3,13 @@ import { getFacturas, updateFactura } from './api-service';
 
 
 export const useFacturaStore = defineStore('factura', {
-    state: () => ({
-        facturas: [],
-        cargando: false,
-        error: null
-    }),
+  state() {
+    return {
+      facturas: [],
+      cargando: false,
+      error: null
+    };
+  },
     actions: {
         async cargarFacturas() {
             this.cargando = true;

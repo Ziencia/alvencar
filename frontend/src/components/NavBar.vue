@@ -23,6 +23,11 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link class="nav-link d-flex align-items-center" to="/ofertas">
+              <i class="bi bi-award-fill me-2"></i> Ofertas
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link d-flex align-items-center" to="/transacciones">
               <i class="bi bi-cash-stack me-2"></i> Transacciones
             </router-link>

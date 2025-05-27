@@ -39,6 +39,9 @@ public class Vehiculo {
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Transaccion.class, mappedBy = "vehiculo")
 	private Collection<Transaccion> transacciones = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = Oferta.class, mappedBy = "vehiculo")
+    private Collection<Oferta> ofertas = new ArrayList<>();
+
     public Vehiculo() {}
 
     public Vehiculo(String matricula, String bastidor, String marca, String modelo,
@@ -128,6 +131,19 @@ public class Vehiculo {
 	public void addTransaccion(Transaccion transaccion) {
 		getTransacciones().add(transaccion);
 		transaccion.setVehiculo(this);
+	}
+
+    public Collection<Oferta> getOfertas() {
+		return ofertas;
+	}
+
+	public void setOfertas(Collection<Oferta> ofertas) {
+		this.ofertas = ofertas;
+	}
+
+	public void addOferta(Oferta oferta) {
+		getOfertas().add(oferta);
+		oferta.setVehiculo(this);
 	}
 
     public boolean isVendido() {
