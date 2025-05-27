@@ -1,13 +1,14 @@
-import axios from 'axios';
 import { defineStore } from 'pinia';
 import { getClientes, postCliente, deleteCliente, updateCliente } from "@/stores/api-service.js"
 
 export const useClienteStore = defineStore('cliente', {
-  state: () => ({
-    clientes: [],
-    cargando: false,
-    error: null
-  }),
+  state() {
+    return {
+      clientes: [],
+      cargando: false,
+      error: null
+    };
+  },
   actions: {
     async cargarClientes() {
       this.cargando = true;
@@ -53,7 +54,3 @@ export const useClienteStore = defineStore('cliente', {
     }
   }
 });
-
-function extraerIdDesdeUrl(url) {
-  return url.split('/').pop();
-}

@@ -3,12 +3,14 @@ import { defineStore } from 'pinia';
 import { getTransacciones, postFactura, deleteTransaccionPorId } from './api-service';
 
 export const useTransaccionStore = defineStore('transaccion', {
-  state: () => ({
-    ventas: [],
-    alquileres: [],
-    cargando: false,
-    error: null
-  }),
+  state() {
+    return {
+      ventas: [],
+      alquileres: [],
+      cargando: false,
+      error: null
+    };
+  },
   actions: {
     async cargarTransacciones() {
       this.cargando = true;
