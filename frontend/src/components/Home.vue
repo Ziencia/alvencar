@@ -3,6 +3,7 @@ import { useVehiculoStore } from '@/stores/vehiculoStore';
 import { useClienteStore } from '@/stores/clienteStore';
 import { useTransaccionStore } from '@/stores/transaccionStore';
 import { useFacturaStore } from '@/stores/facturaStore';
+import { useOfertaStore } from '@/stores/ofertaStore'
 import { mapState } from 'pinia';
 
 export default {
@@ -11,6 +12,7 @@ export default {
         ...mapState(useClienteStore, ['clientes']),
         ...mapState(useTransaccionStore, ['ventas', 'alquileres']),
         ...mapState(useFacturaStore, ['facturas']),
+        ...mapState(useOfertaStore, ['ofertas']),
 
         totalVehiculos() {
             return this.vehiculos.length;
@@ -26,6 +28,9 @@ export default {
         },
         totalFacturas() {
             return this.facturas.length;
+        },
+        totalOfertas(){
+            return this.ofertas.length;
         }
     },
     mounted() {
@@ -33,11 +38,13 @@ export default {
         const clientesStore = useClienteStore();
         const transaccionesStore = useTransaccionStore();
         const facturaStore = useFacturaStore();
+        const ofertaStore = useOfertaStore();
 
         vehiculosStore.cargarVehiculos();
         clientesStore.cargarClientes();
         transaccionesStore.cargarTransacciones();
         facturaStore.cargarFacturas();
+        ofertaStore.cargarOfertas();
     }
 };
 </script>
@@ -76,7 +83,7 @@ export default {
                     <div class="card-body text-center">
                         <i class="bi bi-car-front-fill display-4 mb-3"></i>
                         <h4>Total de ofertas</h4>
-                        <h2>{{ totalVehiculos }}</h2>
+                        <h2>{{ totalOfertas }}</h2>
                     </div>
                 </div>
             </div>

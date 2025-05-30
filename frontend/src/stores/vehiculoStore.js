@@ -15,7 +15,10 @@ export const useVehiculoStore = defineStore('vehiculo', {
       this.error = null;
       try {
         const res = await getVehiculos();
-        this.vehiculos = res.data._embedded?.vehiculos || [];
+        this.vehiculos = res.data._embedded.vehiculos.map(v => ({
+          ...v,
+          id: v._links.self.href.split('/').pop()
+        }));
       } catch (e) {
         this.error = 'Error al cargar vehículos';
       } finally {
