@@ -13,7 +13,7 @@ export function cambiarHttpPorHttps(enlace) {
     return enlace.replace(/^http:/, 'https:');
 }
 
-function llamadaAPI(method, body, path) {
+function llamadaAPI(method, body, path, contentType = "application/json") {
   let config = {
     method: method ?? "get",
     maxBodyLength: Infinity,
@@ -22,7 +22,7 @@ function llamadaAPI(method, body, path) {
   };
   if (body) {
     config.data = body;
-    config.headers["Content-Type"] = "application/json";
+    config.headers["Content-Type"] = contentType;;
   }
   return axios.request(config);
 }
@@ -92,4 +92,8 @@ export function deleteOferta(href) {
   }  
 export function updateOferta(href, data) {
     return llamadaAPI("put", data, href);
+}
+export function updateOfertaVehiculo(href,data){
+  const hrefOfertaVehiculos = href + "/vehiculo";
+  return llamadaAPI("put", data , hrefOfertaVehiculos, "text/uri-list");
 }

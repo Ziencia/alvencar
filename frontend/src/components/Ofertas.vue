@@ -21,29 +21,47 @@ export default {
     ...mapState(useVehiculoStore, ['vehiculos'])
   },
   created() {
-    this.ofertaStore = useOfertaStore();
-    this.ofertaStore.cargarOfertas();
-
-    this.useVehiculoStore = useVehiculoStore();
-    this.useVehiculoStore.cargarVehiculos();
-
+    this.cargarDatos();
   },
   methods: {
+    async cargarDatos() {
+      this.ofertaStore = useOfertaStore();
+      this.ofertaStore.cargarOfertas();
+
+      this.vehiculoStore = useVehiculoStore();
+      this.vehiculoStore.cargarVehiculos();
+    },
     editarOferta(oferta) {
       this.ofertaEditando = oferta;
-      this.nuevaOferta = { ...oferta };
+      this.nuevaOferta = {
+        ofertaVenta: oferta.ofertaVenta,
+        ofertaAlquiler: oferta.ofertaAlquiler,
+        vehiculoID: oferta.vehiculo.id
+      };
       const modalOM = document.getElementById('ofertaModal');
       const modal = Modal.getOrCreateInstance(modalOM);
       modal.show();
     },
     async guardarOferta() {
       try {
-        if (this.ofertaEditando) {
-          const ofertaActualizada = { ...this.nuevaOferta, _links: this.ofertaEditando._links };
-          await this.ofertaStore.editarOferta(ofertaActualizada);
-        } else {
-          await this.ofertaStore.crearOferta({ ...this.nuevaOferta });
+        const vehiculoSeleccionado = this.vehiculos.find(v => Number(v.id) === Number(this.nuevaOferta.vehiculoID));
+        const vehiculoSeleccionadoURL = vehiculoSeleccionado._links.self.href;
+
+        const datosOferta = {
+          ... this.ofertaEditando,
+          vehiculo: vehiculoSeleccionadoURL,
+          ofertaAlquiler: this.nuevaOferta.ofertaAlquiler,
+          ofertaVenta: this.nuevaOferta.ofertaVenta
         }
+
+        if (this.ofertaEditando) {
+          const datosOfertaEditada = { ...datosOferta, _links: this.ofertaEditando._links };
+          await this.ofertaStore.editarOferta(datosOferta);
+          this.ofertaEditando = null;
+        } else {
+          await this.ofertaStore.crearOferta(datosOferta);
+        }
+        await this.ofertaStore.cargarOfertas();
         this.nuevaOferta = {
           ofertaVenta: '',
           ofertaAlquiler: '',
@@ -57,6 +75,18 @@ export default {
       } catch (error) {
         console.error('Error al guardar oferta:', error);
       }
+    },
+    nuevaOfertaModal() {
+      this.nuevaOferta = {
+        ofertaVenta: '',
+        ofertaAlquiler: '',
+        vehiculoID: null
+      };
+      this.ofertaEditando = null;
+
+      const modalOM = document.getElementById('ofertaModal');
+      const modal = Modal.getOrCreateInstance(modalOM);
+      modal.show();
     },
     solicitarEliminacion(oferta) {
       this.ofertaEliminando = oferta;
@@ -83,9 +113,9 @@ export default {
 <template>
   <div class="container mt-4">
 
-    <h3 class="mb-4 text-dark" >
+    <h3 class="mb-4 text-dark">
       🔖 Listado de ofertas
-      <small v-if="ofertas.length > 0"  class="text-muted">
+      <small v-if="ofertas.length > 0" class="text-muted">
         (Actualmente hay {{ ofertas.length }} {{ ofertas.length === 1 ? 'oferta' : 'ofertas' }})
       </small>
     </h3>
@@ -94,7 +124,8 @@ export default {
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
     <div class="d-flex mb-3">
-      <button class="btn btn-outline-dark btn-lg mb-3 ms-auto" data-bs-toggle="modal" data-bs-target="#ofertaModal">
+      <button class="btn btn-outline-dark btn-lg mb-3 ms-auto" data-bs-toggle="modal" data-bs-target="#ofertaModal"
+        @click="nuevaOfertaModal">
         ➕ Añadir oferta
       </button>
     </div>
@@ -130,20 +161,20 @@ export default {
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow">
           <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title" id="ofertaModalLaber">Nueva oferta</h5>
+            <h5 class="modal-title" id="ofertaModalLaber">Oferta de vehículo</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
               aria-label="Cerrar"></button>
           </div>
           <div class="modal-body">
             <form @submit.prevent="guardarOferta">
-                   <div class="mb-3">
-                        <label class="form-label fw-semibold fs-6">Vehículo</label>
-                        <select v-model="nuevaOferta.vehiculoID" class="form-select form-select-m" required>
-                            <option v-for="v in vehiculos" :key="v.id" :value="v.id">
-                                {{ v.matricula }},  {{ v.marca }} {{ v.modelo }}
-                            </option>
-                        </select>
-                    </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold fs-6">Vehículo</label>
+                <select v-model.number="nuevaOferta.vehiculoID" class="form-select form-select-m" required>
+                  <option v-for="v in vehiculos" :key="v.id" :value="v.id">
+                    {{ v.matricula }}, {{ v.marca }} {{ v.modelo }}
+                  </option>
+                </select>
+              </div>
               <div class="mb-3">
                 <label class="form-label">Oferta de venta:</label>
                 <input v-model="nuevaOferta.ofertaVenta" type="number" class="form-control" required />
@@ -152,10 +183,6 @@ export default {
                 <label class="form-label">Oferta de alquiler:</label>
                 <input v-model="nuevaOferta.ofertaAlquiler" type="number" class="form-control" required />
               </div>
-              <!--<div class="mb-3">
-                <label class="form-label">Vehículo:</label>
-                <input v-model="nuevoCliente.telefono" type="text" class="form-control" />
-              </div>-->
               <div class="text-end">
                 <button type="submit" class="btn btn-success">Guardar</button>
                 <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancelar</button>
@@ -179,7 +206,8 @@ export default {
         <div class="modal-body">
           <p>¿Estás seguro de que desea eliminar la oferta?</p>
           <p class="alert alert-warning text-danger fw-bold">Si elimina la oferta, no se podrá recuperar</p>
-          <p>Oferta: {{ ofertaEliminando?.vehiculo?.getMatricula() }} para alquiler {{ ofertaEliminando?.ofertaAlquiler }} 
+          <p> Vehiculo: {{ ofertaEliminando?.vehiculo?.matricula }}, oferta para alquiler {{
+            ofertaEliminando?.ofertaAlquiler }}
             y venta {{ ofertaEliminando?.ofertaVenta }}</p>
         </div>
         <div class="modal-footer">
