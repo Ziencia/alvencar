@@ -1,5 +1,5 @@
 <script>
-import { getClientes, getVehiculosNoVendidos, postVenta, updateVehiculo } from '@/stores/api-service';
+import { getClientes, getVehiculosNoVendidos, postVenta, updateVehiculo, getVehiculoOfertas } from '@/stores/api-service';
 
 export default {
     data() {
@@ -10,13 +10,13 @@ export default {
                 clienteId: null,
                 vehiculoId: null,
                 importe: null,
-                fechaHoraEntrega: null,
+                fechaHoraEntrega: this.getFechaHoraActual(),
                 regimen: null
             }
         };
     },
     computed: {
-       fechaFinGarantia() {
+        fechaFinGarantia() {
             if (!this.venta.fechaHoraEntrega) return null;
             const fecha = new Date(this.venta.fechaHoraEntrega);
             fecha.setFullYear(fecha.getFullYear() + 3);
@@ -42,9 +42,9 @@ export default {
 
         async guardarVenta() {
             const clienteURL = this.clientes.find(c => c.id === this.venta.clienteId)._links.self.href;
-            const vehiculoSeleccionado = this.vehiculos.find(v => v.id === this.venta.vehiculoId);  
+            const vehiculoSeleccionado = this.vehiculos.find(v => v.id === this.venta.vehiculoId);
             const vehiculoURL = vehiculoSeleccionado._links.self.href;
-           
+
             const datos = {
                 cliente: clienteURL,
                 vehiculo: vehiculoURL,
@@ -64,10 +64,37 @@ export default {
         },
         cancelar() {
             this.$router.push('/transacciones');
+        },
+        //https://community.esri.com/t5/arcgis-javascript-maps-sdk-questions/javascript-date-now-in-local-time/m-p/494668#M45957
+        getFechaHoraActual() {
+            const actual = new Date();
+            const diferencia = actual.getTimezoneOffset();
+            const local = new Date(actual.getTime() - diferencia * 60 * 1000);
+            return local.toISOString().slice(0, 16);
         }
     },
     created() {
         this.cargarDatos();
+    },
+    // Uso de watchers https://vuejs.org/guide/essentials/watchers.html
+    watch: {
+        async 'venta.vehiculoId'(buscarIdOfertas) {
+            if (!buscarIdOfertas) return;
+            try {
+                const res = await getVehiculoOfertas(buscarIdOfertas);
+                const ofertas = res.data._embedded?.ofertas || [];
+                if (ofertas.length > 0) {
+                    const ultimaOferta = ofertas.reduce((anterior, actual) =>
+                        anterior.id > actual.id ? anterior : actual
+                    );
+                    this.venta.importe = ultimaOferta.ofertaVenta;
+                } else {
+                    this.venta.importe = 0;
+                }
+            } catch (error) {
+                console.error('Error con las ofertas:', error);
+            }
+        }
     }
 };
 </script>
@@ -113,7 +140,7 @@ export default {
                         </div>
                     </div>
 
-                   <div class="text-end mt-5">
+                    <div class="text-end mt-5">
                         <button type="submit" class="btn btn-success btn-l">Guardar</button>
                         <button type="button" class="btn btn-secondary btn-l ms-2" @click="cancelar">Cancelar</button>
                     </div>

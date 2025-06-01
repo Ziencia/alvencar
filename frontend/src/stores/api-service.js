@@ -46,8 +46,8 @@ export function getVehiculos() {
 export function getVehiculosNoVendidos() {
   return llamadaAPI("get", null, API_VEHICULOS +  "/search/vendido?vendido=false");
 }
-export function getVehiculoOferta(href){
-  return llamadaAPI("get",null, href);
+export function getVehiculoOfertas(vehiculoId){
+  return llamadaAPI("get",null, API_VEHICULOS + `/${vehiculoId}/ofertas`);
 }
 export function postVehiculo(data) {
     return llamadaAPI("post", data, API_VEHICULOS)
