@@ -83,11 +83,19 @@ export const useTransaccionStore = defineStore('transaccion', {
       try {
         const id = extraerIdDesdeUrl(transaccion._links.self.href);
         if (!id) throw new Error("No se pudo extraer el ID de la transaccion");
+        
+        const res = await axios.get(transaccion._links.vehiculo.href);
+        const vehiculo = res.data;
+        const vehiculoNoVendido = {
+                ...vehiculo,
+                vendido: false
+            };
+        await updateVehiculo(vehiculo._links.self.href, vehiculoNoVendido);
         await deleteTransaccionPorId(id);
         this.cargarTransacciones();
       } catch (e) {
-        console.error('Error al eliminar cliente:', e);
-        this.error = 'No se pudo eliminar el cliente';
+        console.error('Error al eliminar la transaccion:', e);
+        this.error = 'No se pudo eliminar la transaccion';
       }
     },
   }
