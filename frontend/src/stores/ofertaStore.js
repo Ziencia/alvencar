@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { getOfertas, getVehiculoOferta, postOferta, deleteOferta, updateOferta, updateOfertaVehiculo} from "@/stores/api-service.js"
+import { getOfertas, postOferta, deleteOferta, updateOferta, updateOfertaVehiculo} from "@/stores/api-service.js"
 
 export const useOfertaStore = defineStore('oferta', {
   state() {
