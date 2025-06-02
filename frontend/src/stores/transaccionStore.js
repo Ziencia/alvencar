@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { getTransacciones, postFactura, deleteTransaccionPorId } from './api-service';
+import { getTransacciones, postFactura, deleteTransaccionPorId, updateVehiculo } from './api-service';
 
 export const useTransaccionStore = defineStore('transaccion', {
   state() {
