@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { getTransacciones, postFactura, deleteTransaccionPorId, updateVehiculo } from './api-service';
+import { getTransacciones, postFactura, deleteTransaccionPorId, updateVehiculo, updateTransaccion } from './api-service';
 
 export const useTransaccionStore = defineStore('transaccion', {
   state() {
@@ -83,21 +83,36 @@ export const useTransaccionStore = defineStore('transaccion', {
       try {
         const id = extraerIdDesdeUrl(transaccion._links.self.href);
         if (!id) throw new Error("No se pudo extraer el ID de la transaccion");
-        
+
         const res = await axios.get(transaccion._links.vehiculo.href);
         const vehiculo = res.data;
         const vehiculoNoVendido = {
-                ...vehiculo,
-                vendido: false
-            };
+          ...vehiculo,
+          vendido: false
+        };
         await updateVehiculo(vehiculo._links.self.href, vehiculoNoVendido);
         await deleteTransaccionPorId(id);
         this.cargarTransacciones();
       } catch (e) {
-        console.error('Error al eliminar la transaccion:', e);
         this.error = 'No se pudo eliminar la transaccion';
       }
     },
+    async editarAlquiler(alquiler) {
+      try {
+        const url = alquiler._links.self.href;
+        const { _links, ...alquilerSinLinks } = alquiler;
+        const res = await updateTransaccion(url, alquilerSinLinks);
+        const index = this.alquileres.findIndex(t => t._links.self.href === url);
+        if (index !== -1) {
+          this.alquileres[index] = {
+            ...this.alquileres[index],
+            ...res.data
+          };
+        }
+      } catch (e) {
+        this.error = "No se pudo editar el alquiler";
+      }
+    }
   }
 });
 
