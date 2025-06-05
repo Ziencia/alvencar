@@ -141,8 +141,8 @@ export default {
                     </div>
 
                     <div class="text-end mt-5">
-                        <button type="submit" class="btn btn-success btn-l">Guardar</button>
-                        <button type="button" class="btn btn-secondary btn-l ms-2" @click="cancelar">Cancelar</button>
+                        <button type="button" class="btn btn-secondary btn-l" @click="cancelar">Cancelar</button>
+                        <button type="submit" class="btn btn-success btn-l ms-2">Guardar</button>
                     </div>
 
                 </form>

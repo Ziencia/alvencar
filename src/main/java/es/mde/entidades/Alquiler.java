@@ -10,20 +10,18 @@ import jakarta.persistence.Entity;
 public class Alquiler extends Transaccion{
     
   private LocalDateTime fechaHoraDevolucion;
-  private LocalDateTime fechaHoraDevuelto;
   private float kmAntes;
   private float kmDespues;
-  private float depositoAntes;
-  private float depositoDespues;
+  private String depositoAntes;
+  private String depositoDespues;
 
   public Alquiler(){
   }
 
-  public Alquiler(float importe, Vehiculo vehiculo, Cliente cliente, LocalDateTime fechaHoraEntrega, LocalDateTime fechaHoraDevolucion, LocalDateTime fechaHoraDevuelto,
-        float kmAntes, float kmDespues, float depositoAntes, float depositoDespues) {
+  public Alquiler(float importe, Vehiculo vehiculo, Cliente cliente, LocalDateTime fechaHoraEntrega, LocalDateTime fechaHoraDevolucion,
+        float kmAntes, float kmDespues, String depositoAntes, String depositoDespues) {
     super(vehiculo, cliente, importe, fechaHoraEntrega);
     this.fechaHoraDevolucion = fechaHoraDevolucion;
-    this.fechaHoraDevuelto = fechaHoraDevuelto;
     this.kmAntes = kmAntes;
     this.kmDespues = kmDespues;
     this.depositoAntes = depositoAntes;
@@ -36,14 +34,6 @@ public class Alquiler extends Transaccion{
 
   public void setFechaHoraDevolucion(LocalDateTime fechaHoraDevolucion) {
     this.fechaHoraDevolucion = fechaHoraDevolucion;
-  }
-
-  public LocalDateTime getFechaHoraDevuelto() {
-    return fechaHoraDevuelto;
-  }
-
-  public void setFechaHoraDevuelto(LocalDateTime fechaHoraDevuelto) {
-    this.fechaHoraDevuelto = fechaHoraDevuelto;
   }
 
   public float getKmAntes() {
@@ -62,20 +52,19 @@ public class Alquiler extends Transaccion{
     this.kmDespues = kmDespues;
   }
 
-  public float getDepositoAntes() {
+  public String getDepositoAntes() {
     return depositoAntes;
   }
 
-  public void setDepositoAntes(float depositoAntes) {
+  public void setDepositoAntes(String depositoAntes) {
     this.depositoAntes = depositoAntes;
   }
 
-  public float getDepositoDespues() {
+  public String getDepositoDespues() {
     return depositoDespues;
   }
 
-  public void setDepositoDespues(float depositoDespues) {
+  public void setDepositoDespues(String depositoDespues) {
     this.depositoDespues = depositoDespues;
-  }
-  
+  }  
 }

@@ -5,12 +5,13 @@ const host = 'http://localhost:8083/api/';
 const API_CLIENTES = host + "clientes";
 const API_VEHICULOS = host + "vehiculos";
 const API_FACTURAS = host + "facturas";
-const API_VENTAS = host +"ventas";
+const API_VENTAS = host + "ventas";
+const API_ALQUILERES = host + "alquileres";
 const API_TRANSACCIONES = host + "transacciones";
 const API_OFERTAS = host + "ofertas";
 
 export function cambiarHttpPorHttps(enlace) {
-    return enlace.replace(/^http:/, 'https:');
+  return enlace.replace(/^http:/, 'https:');
 }
 
 function llamadaAPI(method, body, path, contentType = "application/json") {
@@ -31,69 +32,76 @@ export function getClientes() {
   return llamadaAPI("get", null, API_CLIENTES);
 }
 export function postCliente(data) {
-    return llamadaAPI("post", data, API_CLIENTES)
+  return llamadaAPI("post", data, API_CLIENTES)
 }
 export function deleteCliente(href) {
-    return llamadaAPI("delete", null, href);
-  }  
+  return llamadaAPI("delete", null, href);
+}
 export function updateCliente(href, data) {
-    return llamadaAPI("put", data, href);
+  return llamadaAPI("put", data, href);
 }
 
 export function getVehiculos() {
   return llamadaAPI("get", null, API_VEHICULOS);
 }
 export function getVehiculosNoVendidos() {
-  return llamadaAPI("get", null, API_VEHICULOS +  "/search/vendido?vendido=false");
+  return llamadaAPI("get", null, API_VEHICULOS + "/search/vendido?vendido=false");
 }
-export function getVehiculoOfertas(vehiculoId){
-  return llamadaAPI("get",null, API_VEHICULOS + `/${vehiculoId}/ofertas`);
+export function getVehiculoOfertas(vehiculoId) {
+  return llamadaAPI("get", null, API_VEHICULOS + `/${vehiculoId}/ofertas`);
 }
 export function postVehiculo(data) {
-    return llamadaAPI("post", data, API_VEHICULOS)
+  return llamadaAPI("post", data, API_VEHICULOS)
 }
 export function deleteVehiculo(href) {
-    return llamadaAPI("delete", null, href);
-}  
+  return llamadaAPI("delete", null, href);
+}
 export function updateVehiculo(href, data) {
-    return llamadaAPI("put", data, href);
+  return llamadaAPI("put", data, href);
 }
 
 export function getFacturas() {
   return llamadaAPI("get", null, API_FACTURAS);
 }
 export function postFactura(data) {
-    return llamadaAPI("post", data, API_FACTURAS);
+  return llamadaAPI("post", data, API_FACTURAS);
 }
 export function updateFactura(href, data) {
-    return llamadaAPI("put", data, href);
+  return llamadaAPI("put", data, href);
 }
 
 export function postVenta(data) {
   return llamadaAPI("post", data, API_VENTAS);
 }
 
+export function postAlquiler(data) {
+  return llamadaAPI("post", data, API_ALQUILERES);
+}
+
 export function getTransacciones() {
   return llamadaAPI("get", null, API_TRANSACCIONES);
 }
 export function deleteTransaccionPorId(id) {
-  const url = API_TRANSACCIONES+`/eliminar/${id}`;
+  const url = API_TRANSACCIONES + `/eliminar/${id}`;
   return llamadaAPI("delete", null, url);
+}
+export function updateTransaccion(href, data) {
+  return llamadaAPI("put", data, href);
 }
 
 export function getOfertas() {
   return llamadaAPI("get", null, API_OFERTAS);
 }
 export function postOferta(data) {
-    return llamadaAPI("post", data, API_OFERTAS)
+  return llamadaAPI("post", data, API_OFERTAS)
 }
 export function deleteOferta(href) {
-    return llamadaAPI("delete", null, href);
-  }  
-export function updateOferta(href, data) {
-    return llamadaAPI("put", data, href);
+  return llamadaAPI("delete", null, href);
 }
-export function updateOfertaVehiculo(href,data){
+export function updateOferta(href, data) {
+  return llamadaAPI("put", data, href);
+}
+export function updateOfertaVehiculo(href, data) {
   const hrefOfertaVehiculos = href + "/vehiculo";
-  return llamadaAPI("put", data , hrefOfertaVehiculos, "text/uri-list");
+  return llamadaAPI("put", data, hrefOfertaVehiculos, "text/uri-list");
 }

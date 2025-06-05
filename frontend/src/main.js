@@ -25,6 +25,7 @@ const Clientes = () => import('@/components/Clientes.vue');
 const Vehiculos = () => import('@/components/Vehiculos.vue');
 const Transacciones = () => import('@/components/Transacciones.vue');
 const Venta = () => import('@/components/Venta.vue');
+const Alquiler = () => import('@/components/Alquiler.vue');
 const Factura = () => import('@/components/Facturas.vue');
 const Oferta = () => import('@/components/Ofertas.vue');
 
@@ -36,6 +37,7 @@ const routes = [
     { path: '/vehiculos', component: Vehiculos, name: 'vehiculos'},
     { path: '/transacciones', component: Transacciones, name: 'transacciones'},
     { path: '/venta', component: Venta, name: 'venta'},
+    { path: '/alquiler', component: Alquiler, name: 'alquiler'},
     { path: '/facturas', component: Factura, name: 'factura'},
     { path: '/ofertas', component: Oferta, name: 'oferta'},
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },

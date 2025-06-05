@@ -210,8 +210,8 @@ export default {
               </div>
             </div>
             <div class="mt-4 text-end">
-              <button type="submit" class="btn btn-success">Guardar</button>
-              <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-success ms-2">Guardar</button>
             </div>
           </form>
         </div>
