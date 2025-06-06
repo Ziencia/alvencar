@@ -3,7 +3,9 @@ import { useTransaccionStore } from '@/stores/transaccionStore';
 import { mapState } from 'pinia';
 import { Modal } from 'bootstrap';
 import { getFechaHoraActual } from '@/util/Fecha.js';
+import { formatoMoneda, formatoNumero } from '@/util/Numero.js';
 import dayjs from 'dayjs';
+import { getDiferenciaEntreFechas } from '@/util/Fecha.js';
 
 export default {
   data() {
@@ -14,10 +16,11 @@ export default {
       alquilerEditando: {
         kmDespues: null,
         depositoDespues: null,
-        fechaHoraDevolucion: getFechaHoraActual(),
+        fechaHoraDevolucion: getFechaHoraActual()
       },
       alquilerEditandoModal: null,
-      };
+      getDiferenciaEntreFechas
+    };
   },
   computed: {
     ...mapState(useTransaccionStore, ['ventas', 'alquileres', 'cargando', 'error']),
@@ -46,6 +49,12 @@ export default {
     abrirModalFactura(venta) {
       this.facturaSeleccionada = venta;
       this.facturaModal.show();
+    },
+    formatoNumero(numero) {
+      return formatoNumero(numero);
+    },
+    formatoMoneda(numero) {
+      return formatoMoneda(numero);
     },
     async confirmarGenerarFactura() {
       const factura = {
@@ -88,6 +97,10 @@ export default {
     editarAlquiler(alquiler) {
       this.alquilerEditando = { ...alquiler };
 
+      if (!this.alquilerEditando.fechaHoraDevolucion) {
+        this.alquilerEditando.fechaHoraDevolucion = getFechaHoraActual();
+      }
+
       if (!this.alquilerEditandoModal) {
         const modalEA = document.getElementById('alquilerEditandoModal');
         this.alquilerEditandoModal = Modal.getOrCreateInstance(modalEA);
@@ -103,16 +116,37 @@ export default {
 
         this.quitarFocoModal();
       } catch (error) {
-        this.error('Error al actualizar el alquiler');
+        this.error = 'Error al actualizar el alquiler';
       }
     },
     cancelarEditandoModal() {
       this.alquilerEditando = {
         kmDespues: null,
         depositoDespues: null,
-        fechaHoraDevolucion: null
+        fechaHoraDevolucion: getFechaHoraActual()
       };
       document.getElementById('btnCancelarEditandoAlquiler').blur();
+    },
+    getTotal(alquiler) {
+      if (!alquiler.fechaHoraDevolucion) {
+        return 'N/D';
+      } else {
+        const numeroDias = this.getDiferenciaEntreFechas(alquiler);
+        let total = numeroDias === 0 ? alquiler.importe : numeroDias * alquiler.importe;
+
+        if (alquiler.kmDespues) {
+          const kmIncluidos = numeroDias === 0 ? 150 : numeroDias * 150;
+          const kmRecorridos = alquiler.kmDespues - alquiler.kmAntes;
+          if (kmRecorridos > kmIncluidos) {
+            total += (kmRecorridos - kmIncluidos) * 0.03;
+          }
+        }
+
+        if (alquiler.depositoDespues === 'Menos') {
+          total += 80;
+        }
+        return total;
+      }
     }
   }
 };
@@ -141,19 +175,86 @@ export default {
     <!-- Tabs Bootstrap -->
     <ul class="nav nav-tabs mb-4" id="transaccionTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active text-dark fs-5" id="ventas-tab" data-bs-toggle="tab" data-bs-target="#ventas"
-          type="button" role="tab">VENTA</button>
+        <button class="nav-link active text-dark fs-5" id="alquileres-tab" data-bs-toggle="tab"
+          data-bs-target="#alquileres" type="button" role="tab">ALQUILER</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link text-dark fs-5" id="alquileres-tab" data-bs-toggle="tab" data-bs-target="#alquileres"
-          type="button" role="tab">ALQUILER</button>
+        <button class="nav-link text-dark fs-5" id="ventas-tab" data-bs-toggle="tab" data-bs-target="#ventas"
+          type="button" role="tab">VENTA</button>
       </li>
     </ul>
 
     <div class="tab-content" id="transaccionTabsContent">
 
+      <!-- ALQUILERES -->
+      <div class="tab-pane fade show active" id="alquileres" role="tabpanel">
+        <div v-if="alquileres.length === 0" class="text-muted">No hay alquileres registrados.</div>
+        <div class="row" v-else>
+          <div class="col-8 mb-4 mx-auto" v-for="(alquiler, i) in alquileres" :key="i">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Alquiler del vehículo {{ alquiler.vehiculo?.matricula }} ({{
+                  alquiler.vehiculo?.marca }}, {{ alquiler.vehiculo?.modelo }})</h5>
+                <div class="border-top my-3"></div>
+                <div class="row mb-3">
+                  <div class="col-3 fw-bold">Realizada el:</div>
+                  <div class="col-3">{{ formatearFecha(alquiler.fechaHoraEntrega) }}</div>
+                  <div class="col-3 fw-bold">Con devolución el:</div>
+                  <div class="col-3">{{ alquiler.fechaHoraDevolucion ? formatearFecha(alquiler.fechaHoraDevolucion) : ''
+                    }}</div>
+                </div>
+
+                <p><strong>Datos del cliente asociado: </strong>
+                  {{ alquiler.cliente?.nombre }} {{
+                    alquiler.cliente?.primerApellido }} {{ alquiler.cliente?.segundoApellido }} ({{ alquiler.cliente?.cif
+                  }})</p>
+
+                <div class="row mb-3">
+                  <div class="col-3 fw-bold">Km. iniciales:</div>
+                  <div class="col-3">{{ formatoNumero(alquiler.kmAntes) }}</div>
+                  <div class="col-3 fw-bold">Km. finales:</div>
+                  <div class="col-3" v-if="alquiler.kmDespues">{{ formatoNumero(alquiler.kmDespues) }}</div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-3 fw-bold">Depósito inicial:</div>
+                  <div class="col-3">{{ alquiler.depositoAntes }}</div>
+                  <div class="col-3 fw-bold">Depósito final:</div>
+                  <div class="col-3">{{ alquiler.depositoDespues }}</div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-3 fw-bold">Precio/dia:</div>
+                  <div class="col-3">{{ formatoMoneda(alquiler.importe) }}</div>
+                  <div class="col-3 fw-bold">Total estimado:</div>
+                  <div class="col-3">{{ formatoMoneda(this.getTotal(alquiler)) }}</div>
+                </div>
+
+                <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
+                  <button class="btn btn-sm btn-outline-primary" @click="abrirModalFactura(alquiler)"
+                    :disabled="!alquilerCerrado(alquiler)" aria-labelledby="Generar factura">
+                    <i class="bi bi-envelope-paper-fill"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-primary" @click="editarAlquiler(alquiler)"
+                    aria-labelledby="Cerrar alquiler">
+                    <i class="bi bi-pencil-fill"></i>
+                  </button>
+                  <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(alquiler)"
+                      aria-labelledby="Eliminar vehículo">
+                      <i class="bi bi-trash-fill"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <!-- VENTAS -->
-      <div class="tab-pane fade show active" id="ventas" role="tabpanel">
+      <div class="tab-pane fade" id="ventas" role="tabpanel">
         <div v-if="ventas.length === 0" class="text-muted">No hay ventas registradas.</div>
         <div class="row" v-else>
           <div class="col-8 mb-4 mx-auto" v-for="(venta, i) in ventas" :key="i">
@@ -189,94 +290,36 @@ export default {
         </div>
       </div>
 
-      <!-- ALQUILERES -->
-      <div class="tab-pane fade" id="alquileres" role="tabpanel">
-        <div v-if="alquileres.length === 0" class="text-muted">No hay alquileres registrados.</div>
-        <div class="row" v-else>
-          <div class="col-8 mb-4 mx-auto" v-for="(alquiler, i) in alquileres" :key="i">
-            <div class="card h-100 shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title">Alquiler del vehículo {{ alquiler.vehiculo?.matricula }} ({{
-                  alquiler.vehiculo?.marca }}, {{ alquiler.vehiculo?.modelo }})</h5>
-                <div class="border-top my-3"></div>
-                <div class="row mb-3">
-                  <div class="col-3 fw-bold">Realizada el:</div>
-                  <div class="col-3">{{ formatearFecha(alquiler.fechaHoraEntrega) }}</div>
-                  <div class="col-3 fw-bold">Con devolución el:</div>
-                  <div class="col-3">{{ alquiler.fechaHoraDevolucion ? formatearFecha(alquiler.fechaHoraDevolucion) : ''
-                  }}</div>
-                </div>
+      <div v-show="facturaSeleccionada" class="modal fade" id="facturaModal" tabindex="-1"
+        aria-labelledby="facturaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="facturaModalLabel">¿Quiere generar la factura?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>FACTURA DE VENTA</strong></p>
+              <p><strong>Cliente:</strong><br />
+                {{ facturaSeleccionada?.cliente?.nombre }} {{ facturaSeleccionada?.cliente?.primerApellido }} {{
+                  facturaSeleccionada?.cliente?.segundoApellido }}, DNI: {{ facturaSeleccionada?.cliente?.cif }}
+                <br>{{ facturaSeleccionada?.cliente?.direccion }}, Telefono: {{ facturaSeleccionada?.cliente?.telefono
+                }}
+              </p>
 
-                <p><strong>Datos del cliente asociado: </strong>
-                  {{ alquiler.cliente?.nombre }} {{
-                    alquiler.cliente?.primerApellido }} {{ alquiler.cliente?.segundoApellido }} ({{ alquiler.cliente?.cif
-                  }})</p>
-
-                <div class="row mb-3">
-                  <div class="col-3 fw-bold">Km. iniciales:</div>
-                  <div class="col-3">{{ alquiler.kmAntes }}</div>
-                  <div class="col-3 fw-bold">Km. finales:</div>
-                  <div class="col-3">{{ alquiler.kmDespues }}</div>
-                </div>
-
-                <div class="row mb-3">
-                  <div class="col-3 fw-bold">Depósito inicial:</div>
-                  <div class="col-3">{{ alquiler.depositoAntes }}</div>
-                  <div class="col-3 fw-bold">Depósito final:</div>
-                  <div class="col-3">{{ alquiler.depositoDespues }}</div>
-                </div>
-
-                <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
-                  <button class="btn btn-sm btn-outline-primary" @click="abrirModalFactura(alquiler)"
-                    :disabled="!alquilerCerrado(alquiler)" aria-labelledby="Generar factura">
-                    <i class="bi bi-envelope-paper-fill"></i>
-                  </button>
-                  <button class="btn btn-sm btn-outline-primary" @click="editarAlquiler(alquiler)"
-                    aria-labelledby="Cerrar alquiler">
-                    <i class="bi bi-pencil-fill"></i>
-                  </button>
-                  <div class="d-flex justify-content-end gap-2">
-                    <button class="btn btn-sm btn-outline-danger" @click="solicitarEliminacion(alquiler)"
-                      aria-labelledby="Eliminar vehículo">
-                      <i class="bi bi-trash-fill"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <p><strong>Vehículo:</strong> <br />
+                {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{
+                  facturaSeleccionada?.vehiculo?.matricula }}</p>
+              <p><strong>Importe de venta:</strong> {{ facturaSeleccionada?.importe }} €</p>
+              <p><strong>Calculo de impuestos:</strong> 21% </p>
+              <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importe * 1.21 }} € </p>
+              <p><strong>Fecha:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-primary" @click="confirmarGenerarFactura">Confirmar</button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div v-show="facturaSeleccionada" class="modal fade" id="facturaModal" tabindex="-1"
-    aria-labelledby="facturaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="facturaModalLabel">¿Quiere generar la factura?</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-          <p><strong>FACTURA DE VENTA</strong></p>
-          <p><strong>Cliente:</strong><br />
-            {{ facturaSeleccionada?.cliente?.nombre }} {{ facturaSeleccionada?.cliente?.primerApellido }} {{
-              facturaSeleccionada?.cliente?.segundoApellido }}, DNI: {{ facturaSeleccionada?.cliente?.cif }}
-            <br>{{ facturaSeleccionada?.cliente?.direccion }}, Telefono: {{ facturaSeleccionada?.cliente?.telefono }}
-          </p>
-
-          <p><strong>Vehículo:</strong> <br />
-            {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{
-              facturaSeleccionada?.vehiculo?.matricula }}</p>
-          <p><strong>Importe de venta:</strong> {{ facturaSeleccionada?.importe }} €</p>
-          <p><strong>Calculo de impuestos:</strong> 21% </p>
-          <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importe * 1.21 }} € </p>
-          <p><strong>Fecha:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" @click="confirmarGenerarFactura">Confirmar</button>
         </div>
       </div>
     </div>
@@ -330,9 +373,8 @@ export default {
               <label for="depositoDespues" class="form-label">Depósito final</label>
               <select v-model="alquilerEditando.depositoDespues" class="form-select" id="depositoDespues">
                 <option value="" disabled>Seleccione</option>
-                <option value="Lleno">Lleno</option>
-                <option value="Medio">Medio</option>
-                <option value="Vacio">Vacío</option>
+                <option value="Igual">Igual</option>
+                <option value="Menos">Menos</option>
               </select>
             </div>
             <div class="text-end">

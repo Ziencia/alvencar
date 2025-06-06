@@ -1,6 +1,7 @@
 <script>
 import { getClientes, getVehiculosNoVendidos, postAlquiler, getVehiculoOfertas } from '@/stores/api-service';
 import { getFechaHoraActual } from '@/util/Fecha.js';
+import CampoNumerico from '@/components/CampoNumerico.vue'
 
 export default {
     data() {
@@ -21,6 +22,7 @@ export default {
             }
         }
     },
+    components: { CampoNumerico },
     methods: {
         async cargarDatos() {
             const [resClientes, resVehiculos] = await Promise.all([
@@ -50,9 +52,9 @@ export default {
                 fechaHoraEntrega: this.alquiler.fechaHoraEntrega,
                 fechaHoraDevolucion: this.alquiler.fechaHoraDevolucion ?? null,
                 kmAntes: this.alquiler.kmAntes,
-                kmDespues: this.alquiler.kmDespues ?? null,
+                kmDespues: this.alquiler.kmDespues ?? '',
                 depositoAntes: this.alquiler.depositoAntes,
-                depositoDespues: this.alquiler.depositoDespues ?? null
+                depositoDespues: this.alquiler.depositoDespues ?? ''
                 //https://www.luisllamas.es/javascript-operador-coalescencia-nula/
             };
 
@@ -131,7 +133,7 @@ export default {
                     <div class="d-flex justify-content-end gap-3 mb-3">
                         <div class="col-6">
                             <label class="form-label fw-semibold fs-6 text-end">Importe (€)</label>
-                            <input type="number" v-model="alquiler.importe" class="form-control form-control-m text-end"
+                            <CampoNumerico v-model="alquiler.importe" class="form-control form-control-m text-end"
                                 required />
                         </div>
                     </div>
@@ -166,8 +168,8 @@ export default {
                             <label class="form-label fw-semibold fs-6 text-end">Depósito final</label>
                             <select v-model="alquiler.depositoDespues" class="form-select text-end">
                                 <option value="" disabled selected>Nivel del deposito</option>
-                                <option value="Lleno">Igual</option>
-                                <option value="Medio">Menos</option>
+                                <option value="Igual">Igual</option>
+                                <option value="Menos">Menos</option>
                             </select>
                         </div>
                     </div>
