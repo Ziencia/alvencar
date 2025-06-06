@@ -2,11 +2,14 @@ package es.mde.entidades;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("ALQUILER")
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class Alquiler extends Transaccion{
     
   private LocalDateTime fechaHoraDevolucion;
