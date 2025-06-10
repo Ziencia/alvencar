@@ -44,8 +44,18 @@ export function updateCliente(href, data) {
 export function getVehiculos() {
   return llamadaAPI("get", null, API_VEHICULOS);
 }
+export function getVehiculoId(id) {
+  return llamadaAPI("get",null, API_VEHICULOS + `/${id}`);
+}
 export function getVehiculosNoVendidos() {
   return llamadaAPI("get", null, API_VEHICULOS + "/search/vendido?vendido=false");
+}
+//https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/append llamada con varios parametros a la API
+export function getVehiculosAlquiler(inicio, fin) {
+  const parametros = new URLSearchParams();
+  if (inicio) parametros.append("inicio", inicio);
+  if (fin) parametros.append("fin", fin);
+  return llamadaAPI("get", null, `${API_VEHICULOS}/alquiler?${parametros.toString()}`);
 }
 export function getVehiculoOfertas(vehiculoId) {
   return llamadaAPI("get", null, API_VEHICULOS + `/${vehiculoId}/ofertas`);

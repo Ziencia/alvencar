@@ -1,5 +1,5 @@
 <script>
-import { getClientes, getVehiculosNoVendidos, postAlquiler, getVehiculoOfertas } from '@/stores/api-service';
+import { getClientes, getVehiculosAlquiler, postAlquiler, getVehiculoOfertas, getVehiculoId } from '@/stores/api-service';
 import { getFechaHoraActual } from '@/util/Fecha.js';
 import CampoNumerico from '@/components/CampoNumerico.vue'
 
@@ -19,7 +19,8 @@ export default {
                 kmDespues: null,
                 depositoAntes: null,
                 depositoDespues: null
-            }
+            },
+            cargaVehiculosAlquiler: false
         }
     },
     components: { CampoNumerico },
@@ -27,23 +28,20 @@ export default {
         async cargarDatos() {
             const [resClientes, resVehiculos] = await Promise.all([
                 getClientes(),
-                getVehiculosNoVendidos()
+                getVehiculosAlquiler(this.alquiler.fechaHoraEntrega)
             ]);
             this.clientes = resClientes.data._embedded.clientes.map(c => ({
                 ...c,
                 id: c._links.self.href.split('/').pop()
             }));
-
-            this.vehiculos = resVehiculos.data._embedded.vehiculos.map(v => ({
-                ...v,
-                id: v._links.self.href.split('/').pop()
-            }));
+            this.vehiculos = resVehiculos.data;
         },
 
         async guardarAlquiler() {
             const clienteURL = this.clientes.find(c => c.id === this.alquiler.clienteId)._links.self.href;
-            const vehiculoSeleccionado = this.vehiculos.find(v => v.id === this.alquiler.vehiculoId);
-            const vehiculoURL = vehiculoSeleccionado._links.self.href;
+
+            const vehiculoSeleccionado = await getVehiculoId(this.alquiler.vehiculoId);
+            const vehiculoURL = vehiculoSeleccionado.data._links.self.href;
 
             const datos = {
                 cliente: clienteURL,
@@ -65,11 +63,26 @@ export default {
         cancelar() {
             this.$router.push('/transacciones');
         },
+
+        async getVehiculosAlquiler() {
+            try {
+                this.cargaVehiculosAlquiler = true;
+                const { fechaHoraEntrega, fechaHoraDevolucion } = this.alquiler;
+                const resVehiculos = await getVehiculosAlquiler(fechaHoraEntrega, fechaHoraDevolucion);
+                this.vehiculos = resVehiculos.data;
+            } catch (error) {
+                this.error("Error vehiculos alquiler", error);
+            } finally {
+                this.cargaVehiculosAlquiler = false;
+            }
+        }
     },
     created() {
         this.cargarDatos();
     },
     watch: {
+        'alquiler.fechaHoraEntrega': 'getVehiculosAlquiler',
+        'alquiler.fechaHoraDevolucion': 'getVehiculosAlquiler',
         async 'alquiler.vehiculoId'(buscarIdOfertas) {
             if (!buscarIdOfertas) return;
             try {
@@ -117,13 +130,18 @@ export default {
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold fs-6">Fecha de devolución</label>
                             <input type="datetime-local" v-model="alquiler.fechaHoraDevolucion" id="fechahora"
-                                class="form-control form-control-m"/>
+                                class="form-control form-control-m" />
                         </div>
                     </div>
 
                     <div class="mb-3 col-12">
                         <label class="form-label fw-semibold fs-6">Vehículo</label>
-                        <select v-model="alquiler.vehiculoId" class="form-select form-select-m" required>
+                        <div v-if="cargaVehiculosAlquiler" class="d-flex justify-content-center align-items-center py-2">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                        <select v-else v-model="alquiler.vehiculoId" class="form-select form-select-m" required>
                             <option v-for="v in vehiculos" :key="v.id" :value="v.id">
                                 {{ v.marca }} {{ v.modelo }} ({{ v.matricula }})
                             </option>
