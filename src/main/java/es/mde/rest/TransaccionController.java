@@ -1,7 +1,6 @@
 package es.mde.rest;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.rest.webmvc.PersistentEntityResource;
 import org.springframework.data.rest.webmvc.PersistentEntityResourceAssembler;
