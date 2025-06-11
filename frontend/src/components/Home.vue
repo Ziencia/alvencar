@@ -131,10 +131,23 @@ export default {
                     <div class="card-body text-center">
                         <i class="bi bi-info-circle display-4 mb-3"></i>
                         <h4>Info:</h4>
-                        <p>V 1.5 Sprint Goal 2, 14/05/25</p>
+                        <p>V 2 Sprint Goal 2, 17/06/25</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Casilla 6 -->
+            <div class="col-md-4 col-lg-4">
+                <div
+                    class="card text-white  h-100 shadow-sm d-flex flex-column justify-content-center align-items-center" style="cursor: none">
+                    <div class="card-body text-center">
+                        <i class="bi bi-patch-exclamation-fill display-4 mb-3"></i>
+                        <h4>Sobre los datos:</h4>
+                        <p>Todos los datos se han generado aleatoriamente. No tienen correspondencia con entidades reales.</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </template>
