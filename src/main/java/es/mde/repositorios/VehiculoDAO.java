@@ -3,6 +3,7 @@ package es.mde.repositorios;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
@@ -19,4 +20,8 @@ public interface VehiculoDAO extends JpaRepository<Vehiculo, Long>, VehiculoDAOC
 
     @RestResource(path = "vendido")
     List<Vehiculo> findByVendido(boolean vendido);
+
+    @Query("SELECT ve FROM Vehiculo ve WHERE ve.vendido = false AND ve.condicionAdquisicion = 'Compra'") 
+    @RestResource(path = "venta")
+    List<Vehiculo> findCompradosAptosVenta();
 }

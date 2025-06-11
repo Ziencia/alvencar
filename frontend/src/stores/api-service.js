@@ -47,7 +47,7 @@ export function getVehiculoId(id) {
   return llamadaAPI("get",null, API_VEHICULOS + `/${id}`);
 }
 export function getVehiculosNoVendidos() {
-  return llamadaAPI("get", null, API_VEHICULOS + "/search/vendido?vendido=false");
+  return llamadaAPI("get", null, API_VEHICULOS + "/search/venta");
 }
 //https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/append llamada con varios parametros a la API
 export function getVehiculosAlquiler(inicio, fin) {
