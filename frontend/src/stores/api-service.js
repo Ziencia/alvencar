@@ -4,6 +4,7 @@ const host = 'https://alvencar-ac4e236c0ceb.herokuapp.com/api/';
 const API_CLIENTES = host + "clientes";
 const API_VEHICULOS = host + "vehiculos";
 const API_FACTURAS = host + "facturas";
+const API_GENERARFACTURA = host + "generarfactura";
 const API_VENTAS = host + "ventas";
 const API_ALQUILERES = host + "alquileres";
 const API_TRANSACCIONES = host + "transacciones";
@@ -13,16 +14,17 @@ export function cambiarHttpPorHttps(enlace) {
   return enlace.replace(/^http:/, 'https:');
 }
 
-function llamadaAPI(method, body, path, contentType = "application/json") {
+function llamadaAPI(method, body, path, contentType = "application/json", axiosConfig = {}) {
   let config = {
     method: method ?? "get",
     maxBodyLength: Infinity,
     url: path,
-    headers: {}
+    headers: {},
+    ...axiosConfig
   };
   if (body) {
     config.data = body;
-    config.headers["Content-Type"] = contentType;;
+    config.headers["Content-Type"] = contentType;
   }
   return axios.request(config);
 }
@@ -77,6 +79,9 @@ export function postFactura(data) {
 }
 export function updateFactura(href, data) {
   return llamadaAPI("put", data, href);
+}
+export function generarfactura(facturaId) {
+  return llamadaAPI("get", null, `${API_GENERARFACTURA}/${facturaId}`,undefined, { responseType: "blob" });
 }
 
 export function postVenta(data) {

@@ -26,7 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 		"classpath:config/gestionBBDD.properties", "classpath:config/passwordsBD.properties"
 })
 @EnableJpaRepositories("${misRepositorios}") // leer valor de propiedades? pero solo para las entidades anotadas
-@ComponentScan({ "es.mde.repositorios", "es.mde.rest" })
+@ComponentScan({ "es.mde.repositorios", "es.mde.rest", "es.mde.service" })
 public class ConfiguracionPorJava {
 
 	@Value("${misEntidades}")
