@@ -27,13 +27,22 @@ public class Factura {
     private float impuestos;
     private LocalDateTime fechaFactura;
     private boolean estaPagada;
+    private int tipoFactura;
+    private LocalDateTime fechaInicioAlquiler;
+    private LocalDateTime fechaFinAlquiler;
+    private int numeroDiasAlquiler;
+    private float importeTotalDias;
+    private float importeKmExtra;
+    private float importePenalizacionDeposito;
+
 
     public Factura() {
     }
 
     public Factura(String conceptoFactura, String nombreApellidosDNI, String datosDireccionLocalizacion,
             String datosVehiculo, float importe, float importeTotal, float impuestos, LocalDateTime fechaFactura,
-            boolean estaPagada) {
+            boolean estaPagada, int tipoFactura, LocalDateTime fechaInicioAlquiler, LocalDateTime fechaFinAlquiler,
+            int numeroDiasAlquiler, float importeTotalDias, float importeKmExtra, float importePenalizacionDeposito) {
         this.conceptoFactura = conceptoFactura;
         this.nombreApellidosDNI = nombreApellidosDNI;
         this.datosDireccionLocalizacion = datosDireccionLocalizacion;
@@ -43,10 +52,66 @@ public class Factura {
         this.impuestos = impuestos;
         this.fechaFactura = fechaFactura;
         this.estaPagada = estaPagada;
+        this.tipoFactura = tipoFactura;
+        this.fechaInicioAlquiler = fechaInicioAlquiler;
+        this.fechaFinAlquiler = fechaFinAlquiler;
+        this.numeroDiasAlquiler = numeroDiasAlquiler;
+        this.importeTotalDias = importeTotalDias;
+        this.importeKmExtra = importeKmExtra;
+        this.importePenalizacionDeposito = importePenalizacionDeposito;
     }
+
 
     public Long getId() {
         return id;
+    }
+
+    public LocalDateTime getFechaInicioAlquiler() {
+        return fechaInicioAlquiler;
+    }
+
+    public void setFechaInicioAlquiler(LocalDateTime fechaInicioAlquiler) {
+        this.fechaInicioAlquiler = fechaInicioAlquiler;
+    }
+
+    public LocalDateTime getFechaFinAlquiler() {
+        return fechaFinAlquiler;
+    }
+
+    public void setFechaFinAlquiler(LocalDateTime fechaFinAlquiler) {
+        this.fechaFinAlquiler = fechaFinAlquiler;
+    }
+
+    public int getNumeroDiasAlquiler() {
+        return numeroDiasAlquiler;
+    }
+
+    public void setNumeroDiasAlquiler(int numeroDiasAlquiler) {
+        this.numeroDiasAlquiler = numeroDiasAlquiler;
+    }
+
+    public float getImporteTotalDias() {
+        return importeTotalDias;
+    }
+
+    public void setImporteTotalDias(float importeTotalDias) {
+        this.importeTotalDias = importeTotalDias;
+    }
+
+    public float getImporteKmExtra() {
+        return importeKmExtra;
+    }
+
+    public void setImporteKmExtra(float importeKmExtra) {
+        this.importeKmExtra = importeKmExtra;
+    }
+
+    public float getImportePenalizacionDeposito() {
+        return importePenalizacionDeposito;
+    }
+
+    public void setImportePenalizacionDeposito(float importePenalizacionDeposito) {
+        this.importePenalizacionDeposito = importePenalizacionDeposito;
     }
 
     public String getConceptoFactura() {
@@ -119,5 +184,14 @@ public class Factura {
 
     public void setEstaPagada(boolean estaPagada) {
         this.estaPagada = estaPagada;
+    }
+
+    // Tipo 0: venta; Tipo 1: alquiler
+    public void setTipoFactura (int tipoFactura) {
+        this.tipoFactura = tipoFactura;
+    }
+
+    public int getTipoFactura () {
+        return tipoFactura;
     }
 }

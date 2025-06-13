@@ -12,7 +12,8 @@ export default {
     return {
       facturaSeleccionada: null,
       transaccionEliminando: null,
-      facturaModal: null,
+      facturaModalVenta: null,
+      facturaModalAlquiler: null,
       alquilerEditando: {
         kmDespues: null,
         depositoDespues: null,
@@ -32,9 +33,14 @@ export default {
     this.transaccionStore = useTransaccionStore();
     this.transaccionStore.cargarTransacciones();
 
-    const modalElement = document.getElementById('facturaModal');
+    const modalElement = document.getElementById('facturaModalVenta');
     if (modalElement) {
-      this.facturaModal = new Modal(modalElement, { backdrop: 'static' });
+      this.facturaModalVenta = new Modal(modalElement, { backdrop: 'static' });
+    }
+
+    const modalElementAlquiler = document.getElementById('facturaModalAlquiler');
+    if (modalElementAlquiler) {
+      this.facturaModalAlquiler = new Modal(modalElementAlquiler, { backdrop: 'static' });
     }
 
     const alquilerModalElement = document.getElementById('alquilerEditandoModal');
@@ -48,7 +54,7 @@ export default {
     },
     abrirModalFactura(venta) {
       this.facturaSeleccionada = venta;
-      this.facturaModal.show();
+      this.facturaModalVenta.show();
     },
     formatoNumero(numero) {
       return formatoNumero(numero);
@@ -56,7 +62,7 @@ export default {
     formatoMoneda(numero) {
       return formatoMoneda(numero);
     },
-    async confirmarGenerarFactura() {
+    async confirmarGenerarFacturaVenta() {
       const factura = {
         conceptoFactura: 'Venta de vehículo',
         nombreApellidosDNI: `${this.facturaSeleccionada.cliente.nombre} ${this.facturaSeleccionada.cliente.primerApellido} ${this.facturaSeleccionada.cliente.segundoApellido}, DNI: ${this.facturaSeleccionada.cliente.cif}`,
@@ -65,11 +71,34 @@ export default {
         importe: this.facturaSeleccionada.importe,
         impuestos: 0.21,
         importeTotal: this.facturaSeleccionada.importe * 1.21,
-        fechaFactura: new Date().toISOString(),
-        estaPagada: false
+        fechaFactura: getFechaHoraActual(),
+        estaPagada: false,
+        tipoFactura: 1
       };
       await this.transaccionStore.crearFactura(factura);
-      this.facturaModal.hide();
+      this.facturaModalVenta.hide();
+    },
+    async confirmarGenerarFacturaAlquiler(){
+      const factura = {
+        conceptoFactura: 'Alquiler de vehículo',
+        nombreApellidosDNI: `${this.facturaSeleccionada.cliente.nombre} ${this.facturaSeleccionada.cliente.primerApellido} ${this.facturaSeleccionada.cliente.segundoApellido}, DNI: ${this.facturaSeleccionada.cliente.cif}`,
+        datosDireccionLocalizacion: `${this.facturaSeleccionada.cliente.direccion}, Teléfono: ${this.facturaSeleccionada.cliente.telefono}`,
+        datosVehiculo: `${this.facturaSeleccionada.vehiculo.marca} ${this.facturaSeleccionada.vehiculo.modelo}, matrícula: ${this.facturaSeleccionada.vehiculo.matricula}`,
+        numeroDiasAlquiler: this.facturaSeleccionada.numeroDiasAlquiler,
+        importe: this.facturaSeleccionada.importe,
+        importeTotalDias: this.facturaSeleccionada.importeTotalDias,
+        importeKmExtra: this.facturaSeleccionada.importeKmExtra,
+        importePenalizacionDeposito: this.facturaSeleccionada.importePenalizacionDeposito,
+        impuestos: 0.21,
+        importeTotal: this.facturaSeleccionada.importeTotal * 1.21,
+        fechaFactura: getFechaHoraActual(),
+        estaPagada: false,
+        fechaInicioAlquiler: this.facturaSeleccionada.fechaHoraEntrega,
+        fechaFinAlquiler: this.facturaSeleccionada.fechaHoraDevolucion,
+        tipoFactura: 0
+      }
+      await this.transaccionStore.crearFactura(factura);
+      this.facturaModalAlquiler.hide();
     },
     solicitarEliminacion(transaccion) {
       this.transaccionEliminando = transaccion;
@@ -147,7 +176,33 @@ export default {
         }
         return total;
       }
-    }
+    },
+    abrirModalFacturaAlquiler(alquiler) {
+      this.facturaSeleccionada = alquiler;      
+
+      let numeroDias = getDiferenciaEntreFechas(this.facturaSeleccionada);
+      this.facturaSeleccionada.numeroDiasAlquiler = numeroDias === 0 ? 1 : numeroDias;
+
+      this.facturaSeleccionada.importeTotalDias = this.facturaSeleccionada.importe * numeroDias;
+
+      let kmIncluidos = numeroDias === 0 ? 150 : numeroDias * 150;
+      let kmRecorridos = this.facturaSeleccionada.kmDespues - this.facturaSeleccionada.kmAntes;
+      let importeKmExtra = 0;
+      if (kmRecorridos > kmIncluidos) {
+            importeKmExtra += (kmRecorridos - kmIncluidos) * 0.03;
+      }
+      this.facturaSeleccionada.importeKmExtra = importeKmExtra;
+      
+      let penalizacionDeposito = 0;
+      if (this.facturaSeleccionada.depositoDespues === 'Menos') {
+          penalizacionDeposito = 80;
+        }
+      this.facturaSeleccionada.importePenalizacionDeposito = penalizacionDeposito;
+      this.facturaSeleccionada.importeTotal = this.facturaSeleccionada.importeTotalDias + 
+                                         this.facturaSeleccionada.importeKmExtra +
+                                         this.facturaSeleccionada.importePenalizacionDeposito; 
+      this.facturaModalAlquiler.show();
+    },
   }
 };
 </script>
@@ -159,8 +214,6 @@ export default {
       <small class="text-muted">(Actualmente hay {{ totalTransacciones }} transacciones)</small>
     </h3>
 
-    <!-- Mensajes de carga y error -->
-    <div v-if="cargando" class="alert alert-info">Cargando clientes...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
     <div class="d-flex mb-3">
@@ -231,7 +284,7 @@ export default {
                 </div>
 
                 <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
-                  <button class="btn btn-sm btn-outline-primary" @click="abrirModalFactura(alquiler)"
+                  <button class="btn btn-sm btn-outline-primary" @click="abrirModalFacturaAlquiler(alquiler)"
                     :disabled="!alquilerCerrado(alquiler)" aria-labelledby="Generar factura">
                     <i class="bi bi-envelope-paper-fill"></i>
                   </button>
@@ -252,6 +305,41 @@ export default {
         </div>
       </div>
 
+       <div v-show="facturaSeleccionada" class="modal fade" id="facturaModalAlquiler" tabindex="-1"
+        aria-labelledby="facturaModalAlquilerLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="facturaModalAlquilerLabel">¿Quiere generar la factura de alquiler?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Cliente:</strong><br />
+                {{ facturaSeleccionada?.cliente?.nombre }} {{ facturaSeleccionada?.cliente?.primerApellido }} {{
+                  facturaSeleccionada?.cliente?.segundoApellido }}, DNI: {{ facturaSeleccionada?.cliente?.cif }}
+                <br>{{ facturaSeleccionada?.cliente?.direccion }}, Telefono: {{ facturaSeleccionada?.cliente?.telefono
+                }}
+              </p>
+              <p><strong>Vehículo:</strong>
+                {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{
+                  facturaSeleccionada?.vehiculo?.matricula }}</p>
+                                <p><strong>Inicio:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}
+                                <strong>Fin:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraDevolucion) }}</p>
+              <p><strong>Precio por dia:</strong> {{ facturaSeleccionada?.importe }} € 
+                  <strong>   Num. dias: </strong> {{ facturaSeleccionada?.numeroDiasAlquiler}}
+                  <strong> Total: </strong> {{ formatoNumero(facturaSeleccionada?.importeTotalDias) }}€ </p> 
+              <p><strong>Importe Km. extra:</strong> {{ facturaSeleccionada?.importeKmExtra }}€
+                  <strong>Importe deposito:</strong> {{  facturaSeleccionada?.importePenalizacionDeposito }}€</p>      
+              <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importeTotal * 1.21 }}€ (IVA 21% incluido) </p>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-primary" @click="confirmarGenerarFacturaAlquiler">Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- VENTAS -->
       <div class="tab-pane fade" id="ventas" role="tabpanel">
@@ -290,16 +378,15 @@ export default {
         </div>
       </div>
 
-      <div v-show="facturaSeleccionada" class="modal fade" id="facturaModal" tabindex="-1"
-        aria-labelledby="facturaModalLabel" aria-hidden="true">
+      <div v-show="facturaSeleccionada" class="modal fade" id="facturaModalVenta" tabindex="-1"
+        aria-labelledby="facturaModalVentaLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="facturaModalLabel">¿Quiere generar la factura?</h5>
+              <h5 class="modal-title" id="facturaModalVentaLabel">¿Quiere generar la factura de venta?</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-              <p><strong>FACTURA DE VENTA</strong></p>
               <p><strong>Cliente:</strong><br />
                 {{ facturaSeleccionada?.cliente?.nombre }} {{ facturaSeleccionada?.cliente?.primerApellido }} {{
                   facturaSeleccionada?.cliente?.segundoApellido }}, DNI: {{ facturaSeleccionada?.cliente?.cif }}
@@ -307,23 +394,24 @@ export default {
                 }}
               </p>
 
-              <p><strong>Vehículo:</strong> <br />
+              <p><strong>Vehículo:</strong>
                 {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{
                   facturaSeleccionada?.vehiculo?.matricula }}</p>
               <p><strong>Importe de venta:</strong> {{ facturaSeleccionada?.importe }} €</p>
-              <p><strong>Calculo de impuestos:</strong> 21% </p>
-              <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importe * 1.21 }} € </p>
+              <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importe * 1.21 }}€ (IVA 21% incluido)</p>
               <p><strong>Fecha:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}</p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" class="btn btn-primary" @click="confirmarGenerarFactura">Confirmar</button>
+              <button type="button" class="btn btn-primary" @click="confirmarGenerarFacturaVenta">Confirmar</button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  
 
   <div class="modal fade" id="confirmarEliminarTransaccion" tabindex="-1"
     aria-labelledby="confirmarEliminarTransaccionLabel" aria-hidden="true">
