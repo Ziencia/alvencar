@@ -25,7 +25,9 @@ export default {
   },
   created() {
     this.vehiculoStore = useVehiculoStore();
-    this.vehiculoStore.cargarVehiculos();
+    if (this.vehiculoStore.vehiculos.length === 0) {
+      this.vehiculoStore.cargarVehiculos();
+    }
   },
   methods: {
     async guardarVehiculo() {
@@ -109,7 +111,6 @@ export default {
       <small class="text-muted">(Actualmente hay {{ vehiculos.length }} vehículos)</small>
     </h3>
 
-    <div v-if="cargando" class="alert alert-info">Cargando vehículos...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
     <div class="d-flex mb-3">

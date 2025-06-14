@@ -26,9 +26,14 @@ export default {
   methods: {
     async cargarDatos() {
       this.ofertaStore = useOfertaStore();
-      this.ofertaStore.cargarOfertas();
-
+      if (this.ofertaStore.ofertas.length === 0) {
+        this.ofertaStore.cargarOfertas();
+      }
       this.vehiculoStore = useVehiculoStore();
+      if (this.vehiculoStore.vehiculos.length === 0) {
+        this.vehiculoStore.cargarVehiculos();
+      }
+    
       this.vehiculoStore.cargarVehiculos();
     },
     editarOferta(oferta) {
@@ -120,7 +125,6 @@ export default {
       </small>
     </h3>
 
-    <div v-if="cargando" class="alert alert-info">Cargando ofertas...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
     <div class="d-flex mb-3">
