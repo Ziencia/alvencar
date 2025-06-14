@@ -23,7 +23,9 @@ export default {
   },
   created() {
     this.clienteStore = useClienteStore();
-    this.clienteStore.cargarClientes();
+    if (this.clienteStore.clientes.length === 0) {
+      this.clienteStore.cargarClientes();
+    }
   },
   methods: {
     editarCliente(cliente) {
@@ -88,7 +90,6 @@ export default {
       <small class="text-muted">(Actualmente hay {{ clientes.length }} clientes)</small>
     </h3>
 
-    <div v-if="cargando" class="alert alert-info">Cargando clientes...</div>
     <div v-if="error" class="alert alert-danger">{{ error }}</div>
 
     <div class="d-flex mb-3">
