@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg py-1 bg-navbar-dark" style="background-color: #7EBDC3;">
     <div class="container-fluid">
-      <router-link class="navbar-brand fs-4 d-flex align-items-center" to="/home">
+      <router-link class="navbar-brand fs-4 d-flex align-items-center" to="/">
         <i class="bi bi-house-door-fill me-2"></i> INICIO
       </router-link>
 

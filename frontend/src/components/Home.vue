@@ -127,7 +127,7 @@ export default {
             <!-- Casilla 6 -->
             <div class="col-md-4 col-lg-4">
                 <div
-                    class="card text-white  h-100 shadow-sm d-flex flex-column justify-content-center align-items-center" style="cursor: none">
+                    class="card text-white  h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
                         <i class="bi bi-info-circle display-4 mb-3"></i>
                         <h4>Info:</h4>
@@ -139,7 +139,7 @@ export default {
             <!-- Casilla 6 -->
             <div class="col-md-4 col-lg-4">
                 <div
-                    class="card text-white  h-100 shadow-sm d-flex flex-column justify-content-center align-items-center" style="cursor: none">
+                    class="card text-white  h-100 shadow-sm d-flex flex-column justify-content-center align-items-center">
                     <div class="card-body text-center">
                         <i class="bi bi-patch-exclamation-fill display-4 mb-3"></i>
                         <h4>Sobre los datos:</h4>

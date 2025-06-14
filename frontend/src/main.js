@@ -31,8 +31,7 @@ const Oferta = () => import('@/components/Ofertas.vue');
 
 
 const routes = [
-    { path: '/', redirect: '/home' },
-    { path: '/home', component: Home, name: 'home'},
+    { path: '/', component: Home, name: 'home'},
     { path: '/clientes', component: Clientes, name: 'clientes'},
     { path: '/vehiculos', component: Vehiculos, name: 'vehiculos'},
     { path: '/transacciones', component: Transacciones, name: 'transacciones'},
