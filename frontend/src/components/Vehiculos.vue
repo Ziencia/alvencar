@@ -100,7 +100,15 @@ export default {
         document.activeElement.blur();
       }
     },
-  }
+    verTransacciones(matricula){
+      this.$router.push({
+        name: 'transacciones',
+        query: {
+          matricula: matricula
+        }
+      });
+    }    
+  },
 };
 </script>
 
@@ -138,7 +146,7 @@ export default {
             </p>
           </div>
           <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
-            <button class="btn btn-sm btn-outline-success" @click="" aria-labelledby="Buscar transacciones">
+            <button class="btn btn-sm btn-outline-success" @click="verTransacciones(vehiculo?.matricula)" aria-labelledby="Buscar transacciones">
               <i class="bi bi-search"></i>
             </button>
             <button class="btn btn-sm btn-outline-primary" @click="editarVehiculo(vehiculo)"

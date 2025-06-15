@@ -63,6 +63,18 @@ export default {
       this.alquilerEditandoModal = new Modal(alquilerModalElement, { backdrop: 'static' });
     }
   },
+  // https://stackoverflow.com/questions/44041751/how-to-properly-use-vue-router-beforerouteenter-or-watch-to-trigger-method-in-si
+beforeRouteEnter(to, from, next) {
+  next(vm => {
+    if (to.query.matricula) {
+      vm.filtroMatricula = to.query.matricula;
+    }
+    if (to.query.dni) {
+      vm.filtroDni = to.query.dni;
+    }
+    vm.$router.replace({ query: {} });
+  });
+  },
   methods: {
     formatearFecha(fechaISO) {
       return dayjs(fechaISO).format('DD/MM/YYYY HH:mm');

@@ -79,7 +79,15 @@ export default {
         document.activeElement.blur();
       }
     },
+    verTransacciones(dni){
+      this.$router.push({
+        name: 'transacciones',
+        query: {
+          dni: dni
+        }
+      });
   }
+},
 };
 </script>
 
@@ -111,6 +119,9 @@ export default {
             <p class="card-text mb-1"><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
           </div>
           <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2">
+                        <button class="btn btn-sm btn-outline-success" @click="verTransacciones(cliente?.cif)" aria-labelledby="Buscar transacciones">
+              <i class="bi bi-search"></i>
+            </button>
             <button class="btn btn-sm btn-outline-primary" @click="editarCliente(cliente)"
               aria-labelledby="Editar Cliente">
               <i class="bi bi-pencil-fill"></i>
