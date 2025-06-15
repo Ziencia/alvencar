@@ -19,6 +19,7 @@ export default {
         depositoDespues: null,
         fechaHoraDevolucion: getFechaHoraActual()
       },
+      bonificado: false,
       alquilerEditandoModal: null,
       getDiferenciaEntreFechas,
       filtroDni: '',
@@ -42,6 +43,11 @@ export default {
         (v.cliente?.cif || '').toLowerCase().includes(this.filtroDni.toLowerCase()) &&
         (v.vehiculo?.matricula || '').toLowerCase().includes(this.filtroMatricula.toLowerCase())
       );
+    },
+    totalBonificado() {
+      const importe = this.facturaSeleccionada?.importe || 0;
+      const iva = this.bonificado ? 0 : 0.21;
+      return (importe * (1 + iva)).toFixed(2);
     }
   },
   mounted() {
@@ -64,16 +70,16 @@ export default {
     }
   },
   // https://stackoverflow.com/questions/44041751/how-to-properly-use-vue-router-beforerouteenter-or-watch-to-trigger-method-in-si
-beforeRouteEnter(to, from, next) {
-  next(vm => {
-    if (to.query.matricula) {
-      vm.filtroMatricula = to.query.matricula;
-    }
-    if (to.query.dni) {
-      vm.filtroDni = to.query.dni;
-    }
-    vm.$router.replace({ query: {} });
-  });
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (to.query.matricula) {
+        vm.filtroMatricula = to.query.matricula;
+      }
+      if (to.query.dni) {
+        vm.filtroDni = to.query.dni;
+      }
+      vm.$router.replace({ query: {} });
+    });
   },
   methods: {
     formatearFecha(fechaISO) {
@@ -90,19 +96,24 @@ beforeRouteEnter(to, from, next) {
       return formatoMoneda(numero);
     },
     async confirmarGenerarFacturaVenta() {
+      const precio = this.facturaSeleccionada.importe;
+      const iva = this.bonificado ? 0 : 0.21;
+      const precioTotal = precio * (1 + iva);
+
       const factura = {
         conceptoFactura: 'Venta de vehículo',
         nombreApellidosDNI: `${this.facturaSeleccionada.cliente.nombre} ${this.facturaSeleccionada.cliente.primerApellido} ${this.facturaSeleccionada.cliente.segundoApellido}, DNI: ${this.facturaSeleccionada.cliente.cif}`,
         datosDireccionLocalizacion: `${this.facturaSeleccionada.cliente.direccion}, Teléfono: ${this.facturaSeleccionada.cliente.telefono}`,
         datosVehiculo: `${this.facturaSeleccionada.vehiculo.marca} ${this.facturaSeleccionada.vehiculo.modelo}, matrícula: ${this.facturaSeleccionada.vehiculo.matricula}`,
         importe: this.facturaSeleccionada.importe,
-        impuestos: 0.21,
-        importeTotal: this.facturaSeleccionada.importe * 1.21,
+        impuestos: iva,
+        importeTotal: precioTotal,
         fechaFactura: getFechaHoraActual(),
         estaPagada: false,
         tipoFactura: 1
       };
       await this.transaccionStore.crearFactura(factura);
+      this.calculoEspecial = false;
       this.facturaModalVenta.hide();
     },
     async confirmarGenerarFacturaAlquiler() {
@@ -222,8 +233,8 @@ beforeRouteEnter(to, from, next) {
 
       let penalizacionDeposito = 0;
       if (this.facturaSeleccionada.depositoDespues === 'Menos') {
-          penalizacionDeposito = 80;
-        }
+        penalizacionDeposito = 80;
+      }
       this.facturaSeleccionada.importePenalizacionDeposito = penalizacionDeposito;
       this.facturaSeleccionada.importeTotal = this.facturaSeleccionada.importeTotalDias + 
                                          this.facturaSeleccionada.importeKmExtra +
@@ -299,7 +310,7 @@ beforeRouteEnter(to, from, next) {
                   <div class="col-3">{{ formatearFecha(alquiler.fechaHoraEntrega) }}</div>
                   <div class="col-3 fw-bold">Con devolución el:</div>
                   <div class="col-3">{{ alquiler.fechaHoraDevolucion ? formatearFecha(alquiler.fechaHoraDevolucion) : ''
-                    }}</div>
+                  }}</div>
                 </div>
 
                 <p><strong>Datos del cliente asociado: </strong>
@@ -446,9 +457,19 @@ beforeRouteEnter(to, from, next) {
                 {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{
                   facturaSeleccionada?.vehiculo?.matricula }}</p>
               <p><strong>Importe de venta:</strong> {{ facturaSeleccionada?.importe }} €</p>
-              <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importe * 1.21 }}€ (IVA 21% incluido)</p>
+              <p><strong>Importe total:</strong> {{ totalBonificado }}€
+                <span v-if="!bonificado">(IVA 21% incluido)</span>
+                <span v-else>(sin IVA)</span>
+              </p>
               <p><strong>Fecha:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}</p>
             </div>
+            <div class="form-check ms-2 mb-3">
+              <input class="form-check-input" type="checkbox" id="bonificado" v-model="bonificado">
+              <label class="form-check-label" for="bonificado">
+                Regimen especial de bienes usados (Exento IVA)
+              </label>
+            </div>
+
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               <button type="button" class="btn btn-primary" @click="confirmarGenerarFacturaVenta">Confirmar</button>
