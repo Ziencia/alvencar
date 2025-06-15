@@ -10,7 +10,9 @@ export default {
   data() {
     return {
       facturaSeleccionada: null,
-      filtro: 'todas'
+      filtro: 'todas',
+      filtroDni: '',
+      filtroMatricula: '',
     };
   },
   components: {
@@ -32,7 +34,13 @@ export default {
     },
     error() {
       return this.facturaStore.error;
-    }
+    },
+    facturasFiltradas() {
+      return this.facturas.filter(f =>
+        (f?.nombreApellidosDNI || '').toLowerCase().includes(this.filtroDni.toLowerCase()) &&
+        (f?.datosVehiculo || '').toLowerCase().includes(this.filtroMatricula.toLowerCase())
+    );
+    },
   },
   methods: {
     formatearFecha(fechaISO) {
@@ -76,10 +84,14 @@ export default {
         case 1: return FacturaVenta;
         default: return null;
       }
+    },
+    limpiarFiltros() {
+      this.filtroDni = '';
+      this.filtroMatricula = '';
     }
   },
   mounted() {
-    this.facturaStore.cargarFacturas();
+    this.facturaStore.cargarFacturas();      
   }
 };
 
@@ -110,11 +122,24 @@ export default {
       </div>
     </div>
 
+    <div class="row justify-content-center mb-3">
+      <div class="col-auto">
+        <div class="input-group">
+          <input v-model="filtroDni" type="text" class="form-control form-control" placeholder="Buscar por DNI" />
+          <input v-model="filtroMatricula" type="text" class="form-control form-control"
+            placeholder="Buscar por matrícula" />
+          <button @click="limpiarFiltros" class="btn btn-outline-secondary btn" title="Limpiar filtros">
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div v-if="facturas.length === 0" class="text-muted"><strong>No hay facturas registradas.</strong></div>
 
 
     <div class="row" v-if="facturas.length">
-      <div class="col-8 mb-4 mx-auto" v-for="factura in facturas" :key="factura.id">
+      <div class="col-8 mb-4 mx-auto" v-for="factura in facturasFiltradas" :key="factura.id">
         <component :is="getTipoFactura(factura.tipoFactura)" :factura="factura" :formatoMoneda="formatoMoneda"
           :extraerIdDesdeUrl="extraerIdDesdeUrl" :formatearFecha="formatearFecha">
 
