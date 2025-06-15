@@ -32,10 +32,10 @@ public class ConfiguracionRest {
     @Bean
     public RepresentationModelProcessor<?> addSearchLinks(RepositoryRestConfiguration config) {
         Map<Class<?>, Class<?>> controllersRegistrados = Map.of(
-                Transaccion.class, TransaccionController.class,
-                Vehiculo.class, VehiculoController.class,
-                Cliente.class, Cliente.class,
-                Factura.class, FacturaController.class);
+                TransaccionConId.class, TransaccionController.class,
+                VehiculoConId.class, VehiculoController.class,
+                ClienteConId.class, ClienteConId.class,
+                FacturaConId.class, FacturaController.class);
 
         return resource -> {
             if (resource instanceof RepositorySearchesResource searchResource) {

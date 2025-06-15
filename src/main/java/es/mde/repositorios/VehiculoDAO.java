@@ -7,21 +7,21 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import es.mde.entidades.Vehiculo;
+import es.mde.entidades.VehiculoConId;
 
 @RepositoryRestResource(path = "vehiculos", itemResourceRel = "vehiculo", collectionResourceRel = "vehiculos")
-public interface VehiculoDAO extends JpaRepository<Vehiculo, Long>, VehiculoDAOCustom {
+public interface VehiculoDAO extends JpaRepository<VehiculoConId, Long>, VehiculoDAOCustom {
   
     @RestResource(path = "marca")
-    List<Vehiculo> findByMarca(String marca);
+    List<VehiculoConId> findByMarca(String marca);
 
     @RestResource(path = "matricula")
-    List<Vehiculo> findByMatriculaContaining(String matricula);
+    List<VehiculoConId> findByMatriculaContaining(String matricula);
 
     @RestResource(path = "vendido")
-    List<Vehiculo> findByVendido(boolean vendido);
+    List<VehiculoConId> findByVendido(boolean vendido);
 
-    @Query("SELECT ve FROM Vehiculo ve WHERE ve.vendido = false AND ve.condicionAdquisicion = 'Compra'") 
+    @Query("SELECT ve FROM VehiculoConId ve WHERE ve.vendido = false AND ve.condicionAdquisicion = 'Compra'") 
     @RestResource(path = "venta")
-    List<Vehiculo> findCompradosAptosVenta();
+    List<VehiculoConId> findCompradosAptosVenta();
 }

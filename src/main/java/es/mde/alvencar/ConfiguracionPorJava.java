@@ -43,6 +43,8 @@ public class ConfiguracionPorJava {
 		em.setJpaVendorAdapter(vendorAdapter);
 
 		em.setPackagesToScan(entidades); // leer valor de propiedades? pero solo para las entidades anotadas
+		em.setMappingResources("jpa/Factura.orm.xml","jpa/Oferta.orm.xml", "jpa/Cliente.orm.xml",
+								"jpa/Vehiculo.orm.xml","jpa/Transaccion.orm.xml");
 		Properties jpaProperties = new Properties();
 		Arrays.asList("dialect", "show_sql", "hbm2ddl.auto", "enable_lazy_load_no_trans") // leer valor de para las
 																							// entidades anotadas

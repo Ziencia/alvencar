@@ -14,7 +14,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
-import es.mde.entidades.Factura;
+import es.mde.entidades.FacturaConId;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +25,7 @@ import java.util.Locale;
 @Service
 public class PdfService {
 
-    public byte[] generarPdf(Factura factura) {
+    public byte[] generarPdf(FacturaConId factura) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
@@ -100,7 +100,7 @@ public class PdfService {
         document.add(espacio);
     }
 
-    private void addSeccionCliente(Document document, Factura factura) {
+    private void addSeccionCliente(Document document, FacturaConId factura) {
         Table tablaDatos = new Table(UnitValue.createPercentArray(new float[] { 30, 70 }))
                 .useAllAvailableWidth();
 
@@ -130,7 +130,7 @@ public class PdfService {
         document.add(espacio);
     }
 
-    private void addSeccionDatosVenta(Document document, Factura factura) {
+    private void addSeccionDatosVenta(Document document, FacturaConId factura) {
         Table tablaImportes = new Table(UnitValue.createPercentArray(new float[] { 70, 30 }))
                 .useAllAvailableWidth();
 
@@ -156,7 +156,7 @@ public class PdfService {
         document.add(espacio);
     }
 
-    private void addSeccionDatosAlquiler(Document document, Factura factura) {
+    private void addSeccionDatosAlquiler(Document document, FacturaConId factura) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         Table tablaImportes = new Table(UnitValue.createPercentArray(new float[] { 70, 30 }))
@@ -210,7 +210,7 @@ public class PdfService {
         document.add(espacio);
     }
 
-    private void addSeccionEstadoPago(Document document, Factura factura) {
+    private void addSeccionEstadoPago(Document document, FacturaConId factura) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         Table tablaExtras = new Table(UnitValue.createPercentArray(new float[] { 30, 70 }))

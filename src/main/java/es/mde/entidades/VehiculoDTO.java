@@ -8,7 +8,7 @@ public class VehiculoDTO {
     private String modelo;
     private String matricula;
 
-    public VehiculoDTO(es.mde.entidades.Vehiculo vehiculo) {
+    public VehiculoDTO(es.mde.entidades.VehiculoConId vehiculo) {
         this.id = vehiculo.getId();
         this.marca = vehiculo.getMarca();
         this.modelo = vehiculo.getModelo();

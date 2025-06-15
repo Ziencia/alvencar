@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.mde.entidades.Transaccion;
+import es.mde.entidades.TransaccionConId;
 import es.mde.repositorios.TransaccionDAO;
 
 @RepositoryRestController
@@ -35,7 +35,7 @@ public class TransaccionController {
             throw new IllegalArgumentException("La matrícula no puede ser vacía");
         }
 
-        List<Transaccion> transacciones = transaccionDAO.getTransaccionesDeMatricula(matricula);
+        List<TransaccionConId> transacciones = transaccionDAO.getTransaccionesDeMatricula(matricula);
 
         return assembler.toCollectionModel(transacciones);
     }
