@@ -24,7 +24,7 @@ La aplicación será diseñada para acceder a ella desde entorno web en un orden
    2. Librería: <https://github.com/Ziencia/alvencar-libreria>
 7. **Despliegue** en Internet:
    1. API: https://alvencar-ac4e236c0ceb.herokuapp.com/api
-   2. Web: https://alvencar.netlify.app/#/home
+   2. Web: https://alvencar.netlify.app/
 
 ## Interfaz de usuario
 
