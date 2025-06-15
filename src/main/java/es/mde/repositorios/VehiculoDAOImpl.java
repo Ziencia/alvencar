@@ -1,5 +1,6 @@
 package es.mde.repositorios;
 
+import es.mde.alvencar.TransaccionImpl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +9,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.mde.entidades.Alquiler;
-import es.mde.entidades.Transaccion;
-import es.mde.entidades.Vehiculo;
+import es.mde.entidades.AlquilerConId;
+import es.mde.entidades.TransaccionConId;
+import es.mde.entidades.VehiculoConId;
 import es.mde.entidades.VehiculoDTO;
-import es.mde.entidades.Venta;
+import es.mde.entidades.VentaConId;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -26,26 +27,26 @@ public class VehiculoDAOImpl implements VehiculoDAOCustom {
 	EntityManager entityManager;
 
 	@Override
-	public List<Transaccion> getTransaccionVehiculo(Long id) {
-		List<Transaccion> transacciones = vehiculoDAO.findById(id).get().getTransacciones().stream().toList();
+	public List<TransaccionConId> getTransaccionVehiculo(Long id) {
+		List<TransaccionConId> transacciones = vehiculoDAO.findById(id).get().getTransacciones().stream().toList();
 		return transacciones;
 	}
 
 	@Override
 	public List<VehiculoDTO> findNoAlquilados(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
-		List<Vehiculo> vehiculosAlquiler = vehiculoDAO.findByVendido(false); // Primer filtro, me quedo solo con los no vendidos
-		List<Vehiculo> vehiculosDisponibles = new ArrayList<>();
+		List<VehiculoConId> vehiculosAlquiler = vehiculoDAO.findByVendido(false); // Primer filtro, me quedo solo con los no vendidos
+		List<VehiculoConId> vehiculosDisponibles = new ArrayList<>();
 
-		for (Vehiculo vehiculo : vehiculosAlquiler) {
+		for (VehiculoConId vehiculo : vehiculosAlquiler) {
 			boolean aptoAlquiler = true;
 
-			for (Transaccion transaccion : vehiculo.getTransacciones()) {
+			for (TransaccionImpl transaccion : vehiculo.getTransacciones()) {
 
-				if (transaccion instanceof Venta) {
+				if (transaccion instanceof VentaConId) {
 					break;
 				}
 
-				Alquiler alquiler = (Alquiler) transaccion;
+				AlquilerConId alquiler = (AlquilerConId) transaccion;
 
 				LocalDateTime inicioAlquiler = alquiler.getFechaHoraEntrega();
 				LocalDateTime finAlquiler = alquiler.getFechaHoraDevolucion();

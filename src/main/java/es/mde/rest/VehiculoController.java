@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.mde.entidades.Transaccion;
+import es.mde.entidades.TransaccionConId;
 import es.mde.entidades.VehiculoDTO;
 import es.mde.repositorios.VehiculoDAO;
 
@@ -45,7 +45,7 @@ public class VehiculoController {
             PersistentEntityResourceAssembler assembler) {
 
         System.err.println("Prueba @Path");
-        List<Transaccion> transacciones = vehiculoDAO.getTransaccionVehiculo(id);
+        List<TransaccionConId> transacciones = vehiculoDAO.getTransaccionVehiculo(id);
 
         return assembler.toCollectionModel(transacciones);
 

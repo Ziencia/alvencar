@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import es.mde.entidades.Factura;
+import es.mde.entidades.FacturaConId;
 import es.mde.repositorios.FacturaDAO;
 
 @RepositoryRestController
@@ -21,12 +21,12 @@ public class FacturaController {
     }
 
     @PutMapping("/facturas/{id}")
-    public ResponseEntity<Factura> actualizarFactura(@PathVariable Long id, @RequestBody Factura factura) {
-        Optional<Factura> facturaExistente = facturaDAO.findById(id);
+    public ResponseEntity<FacturaConId> actualizarFactura(@PathVariable Long id, @RequestBody FacturaConId factura) {
+        Optional<FacturaConId> facturaExistente = facturaDAO.findById(id);
         if (facturaExistente.isPresent()) {
-            Factura facturaActualizar = facturaExistente.get();
+            FacturaConId facturaActualizar = facturaExistente.get();
             facturaActualizar.setEstaPagada(factura.isEstaPagada());
-            Factura facturaGuardada = facturaDAO.save(facturaActualizar);
+            FacturaConId facturaGuardada = facturaDAO.save(facturaActualizar);
             return ResponseEntity.ok(facturaGuardada);
         } else {
             return ResponseEntity.notFound().build();

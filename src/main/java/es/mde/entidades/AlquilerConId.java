@@ -1,5 +1,7 @@
 package es.mde.entidades;
 
+import es.mde.alvencar.Alquiler;
+
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,64 +12,64 @@ import jakarta.persistence.Entity;
 @Entity
 @DiscriminatorValue("ALQUILER")
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class Alquiler extends Transaccion{
+public class AlquilerConId extends TransaccionConId implements Alquiler{
     
   private LocalDateTime fechaHoraDevolucion;
-  private float kmAntes;
-  private float kmDespues;
-  private String depositoAntes;
-  private String depositoDespues;
+  float kmAntes;
+  float kmDespues;
+  String depositoAntes;
+  String depositoDespues;
 
-  public Alquiler(){
+  public AlquilerConId(){
   }
 
-  public Alquiler(float importe, Vehiculo vehiculo, Cliente cliente, LocalDateTime fechaHoraEntrega, LocalDateTime fechaHoraDevolucion,
-        float kmAntes, float kmDespues, String depositoAntes, String depositoDespues) {
-    super(vehiculo, cliente, importe, fechaHoraEntrega);
-    this.fechaHoraDevolucion = fechaHoraDevolucion;
-    this.kmAntes = kmAntes;
-    this.kmDespues = kmDespues;
-    this.depositoAntes = depositoAntes;
-    this.depositoDespues = depositoDespues;
-  }
-
+  @Override
   public LocalDateTime getFechaHoraDevolucion() {
-    return fechaHoraDevolucion;
+    return this.fechaHoraDevolucion;
   }
-
+  @Override
   public void setFechaHoraDevolucion(LocalDateTime fechaHoraDevolucion) {
     this.fechaHoraDevolucion = fechaHoraDevolucion;
   }
 
+  @Override
   public float getKmAntes() {
-    return kmAntes;
+    return this.kmAntes;
   }
 
+  @Override
   public void setKmAntes(float kmAntes) {
     this.kmAntes = kmAntes;
   }
 
+  @Override
   public float getKmDespues() {
-    return kmDespues;
+    return this.kmDespues;
   }
 
+  @Override
   public void setKmDespues(float kmDespues) {
     this.kmDespues = kmDespues;
   }
 
+  @Override
   public String getDepositoAntes() {
-    return depositoAntes;
+    return this.depositoAntes;
   }
 
+  @Override
   public void setDepositoAntes(String depositoAntes) {
     this.depositoAntes = depositoAntes;
   }
 
+  @Override
   public String getDepositoDespues() {
-    return depositoDespues;
+    return this.depositoDespues;
   }
 
+  @Override
   public void setDepositoDespues(String depositoDespues) {
     this.depositoDespues = depositoDespues;
-  }  
+  }
+
 }

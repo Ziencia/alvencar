@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import es.mde.entidades.Factura;
+import es.mde.entidades.FacturaConId;
 import es.mde.repositorios.FacturaDAO;
 import es.mde.service.PdfService;
 
@@ -27,7 +27,7 @@ public class PdfController {
 
     @GetMapping("/api/generarfactura/{id}")
     public ResponseEntity<ByteArrayResource> generatePdf(@PathVariable Long id) {
-        Factura factura = facturaDAO.findById(id)
+        FacturaConId factura = facturaDAO.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay factura"));
 
         byte[] pdfBytes = pdfService.generarPdf(factura);

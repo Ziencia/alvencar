@@ -15,6 +15,7 @@ java {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -22,6 +23,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'com.itextpdf:kernel:8.0.3'
 	implementation 'com.itextpdf:layout:8.0.3'
+	implementation 'com.github.Ziencia:alvencar-libreria:v0.1.9'
 	runtimeOnly 'org.postgresql:postgresql:42.3.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

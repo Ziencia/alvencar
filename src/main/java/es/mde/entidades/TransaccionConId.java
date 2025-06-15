@@ -1,5 +1,7 @@
 package es.mde.entidades;
 
+import es.mde.alvencar.TransaccionImpl;
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -26,71 +28,47 @@ import jakarta.persistence.InheritanceType;
 @DiscriminatorColumn(name = "TIPO")
 @DiscriminatorValue("TRANSACCION")
 
-public class Transaccion {
+public abstract class TransaccionConId extends TransaccionImpl  {
 
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(unique = true)
 	private Long id;
 
-    private float importe;
-    private LocalDateTime fechaHoraEntrega;
-
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "VEHICULO")
-	private Vehiculo vehiculo;
+	private VehiculoConId vehiculo;
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CLIENTE")
-	private Cliente cliente;
+	private ClienteConId cliente;
 
-    public Transaccion() {
+    public TransaccionConId() {
     }
 
-    public Transaccion(Vehiculo vehiculo, Cliente cliente, float importe, LocalDateTime fechaHoraEntrega){
+    public TransaccionConId(VehiculoConId vehiculo, ClienteConId cliente, float importe, LocalDateTime fechaHoraEntrega){
+        super(importe,fechaHoraEntrega);
         this.vehiculo = vehiculo;
         this.cliente = cliente;
-        this.importe = importe;
-        this.fechaHoraEntrega = fechaHoraEntrega;
     }
-
-    public float getImporte() {
-        return importe;
-    }
-
-    public void setImporte(float importe) {
-        this.importe = importe;
-    }    
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getFechaHoraEntrega() {
-        return fechaHoraEntrega;
-    }
-
-    public void setFechaHoraEntrega(LocalDateTime fechaHoraEntrega) {
-        this.fechaHoraEntrega = fechaHoraEntrega;
-    }
-
-    public Cliente getCliente() {
+    public ClienteConId getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    public void setCliente(ClienteConId cliente) {
         this.cliente = cliente;
     }
 
-    public Vehiculo getVehiculo() {
+    public VehiculoConId getVehiculo() {
 		return vehiculo;
 	}
 
-	public void setVehiculo(Vehiculo vehiculo) {
+	public void setVehiculo(VehiculoConId vehiculo) {
 		this.vehiculo = vehiculo;
 	}
 }
