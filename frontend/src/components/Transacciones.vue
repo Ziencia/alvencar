@@ -20,13 +20,28 @@ export default {
         fechaHoraDevolucion: getFechaHoraActual()
       },
       alquilerEditandoModal: null,
-      getDiferenciaEntreFechas
+      getDiferenciaEntreFechas,
+      filtroDni: '',
+      filtroMatricula: '',
     };
   },
   computed: {
     ...mapState(useTransaccionStore, ['ventas', 'alquileres', 'cargando', 'error']),
     totalTransacciones() {
       return this.ventas.length + this.alquileres.length;
+    },
+
+    alquileresFiltrados() {
+      return this.alquileres.filter(a =>
+        (a.cliente?.cif || '').toLowerCase().includes(this.filtroDni.toLowerCase()) &&
+        (a.vehiculo?.matricula || '').toLowerCase().includes(this.filtroMatricula.toLowerCase())
+      );
+    },
+    ventasFiltradas() {
+      return this.ventas.filter(v =>
+        (v.cliente?.cif || '').toLowerCase().includes(this.filtroDni.toLowerCase()) &&
+        (v.vehiculo?.matricula || '').toLowerCase().includes(this.filtroMatricula.toLowerCase())
+      );
     }
   },
   mounted() {
@@ -78,7 +93,7 @@ export default {
       await this.transaccionStore.crearFactura(factura);
       this.facturaModalVenta.hide();
     },
-    async confirmarGenerarFacturaAlquiler(){
+    async confirmarGenerarFacturaAlquiler() {
       const factura = {
         conceptoFactura: 'Alquiler de vehículo',
         nombreApellidosDNI: `${this.facturaSeleccionada.cliente.nombre} ${this.facturaSeleccionada.cliente.primerApellido} ${this.facturaSeleccionada.cliente.segundoApellido}, DNI: ${this.facturaSeleccionada.cliente.cif}`,
@@ -178,7 +193,7 @@ export default {
       }
     },
     abrirModalFacturaAlquiler(alquiler) {
-      this.facturaSeleccionada = alquiler;      
+      this.facturaSeleccionada = alquiler;
 
       let numeroDias = getDiferenciaEntreFechas(this.facturaSeleccionada);
       this.facturaSeleccionada.numeroDiasAlquiler = numeroDias === 0 ? 1 : numeroDias;
@@ -189,10 +204,10 @@ export default {
       let kmRecorridos = this.facturaSeleccionada.kmDespues - this.facturaSeleccionada.kmAntes;
       let importeKmExtra = 0;
       if (kmRecorridos > kmIncluidos) {
-            importeKmExtra += (kmRecorridos - kmIncluidos) * 0.03;
+        importeKmExtra += (kmRecorridos - kmIncluidos) * 0.03;
       }
       this.facturaSeleccionada.importeKmExtra = importeKmExtra;
-      
+
       let penalizacionDeposito = 0;
       if (this.facturaSeleccionada.depositoDespues === 'Menos') {
           penalizacionDeposito = 80;
@@ -203,6 +218,10 @@ export default {
                                          this.facturaSeleccionada.importePenalizacionDeposito; 
       this.facturaModalAlquiler.show();
     },
+      limpiarFiltros() {
+    this.filtroDni = '';
+    this.filtroMatricula = '';
+    }
   }
 };
 </script>
@@ -225,6 +244,20 @@ export default {
       </button>
     </div>
 
+
+    <div class="row justify-content-center mb-3">
+      <div class="col-auto">
+        <div class="input-group">
+          <input v-model="filtroDni" type="text" class="form-control form-control" placeholder="Buscar por DNI" />
+          <input v-model="filtroMatricula" type="text" class="form-control form-control"
+            placeholder="Buscar por matrícula" />
+          <button @click="limpiarFiltros" class="btn btn-outline-secondary btn" title="Limpiar filtros">
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Tabs Bootstrap -->
     <ul class="nav nav-tabs mb-4" id="transaccionTabs" role="tablist">
       <li class="nav-item" role="presentation">
@@ -243,7 +276,7 @@ export default {
       <div class="tab-pane fade show active" id="alquileres" role="tabpanel">
         <div v-if="alquileres.length === 0" class="text-muted">No hay alquileres registrados.</div>
         <div class="row" v-else>
-          <div class="col-8 mb-4 mx-auto" v-for="(alquiler, i) in alquileres" :key="i">
+          <div class="col-8 mb-4 mx-auto" v-for="(alquiler, i) in alquileresFiltrados" :key="i">
             <div class="card h-100 shadow-sm">
               <div class="card-body">
                 <h5 class="card-title">Alquiler del vehículo {{ alquiler.vehiculo?.matricula }} ({{
@@ -305,7 +338,7 @@ export default {
         </div>
       </div>
 
-       <div v-show="facturaSeleccionada" class="modal fade" id="facturaModalAlquiler" tabindex="-1"
+      <div v-show="facturaSeleccionada" class="modal fade" id="facturaModalAlquiler" tabindex="-1"
         aria-labelledby="facturaModalAlquilerLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -323,13 +356,16 @@ export default {
               <p><strong>Vehículo:</strong>
                 {{ facturaSeleccionada?.vehiculo?.marca }} {{ facturaSeleccionada?.vehiculo?.modelo }}, matricula: {{
                   facturaSeleccionada?.vehiculo?.matricula }}</p>
-                                <p><strong>Inicio:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}
-                                <strong>Fin:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraDevolucion) }}</p>
-              <p><strong>Precio por dia:</strong> {{ facturaSeleccionada?.importe }} € 
-                  <strong>   Num. dias: </strong> {{ facturaSeleccionada?.numeroDiasAlquiler}}
-                  <strong> Total: </strong> {{ formatoNumero(facturaSeleccionada?.importeTotalDias) }}€ </p> 
+              <p><strong>Inicio:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraEntrega) }}
+                <strong>Fin:</strong> {{ formatearFecha(facturaSeleccionada?.fechaHoraDevolucion) }}
+              </p>
+              <p><strong>Precio por dia:</strong> {{ facturaSeleccionada?.importe }} €
+                <strong> Num. dias: </strong> {{ facturaSeleccionada?.numeroDiasAlquiler }}
+                <strong> Total: </strong> {{ formatoNumero(facturaSeleccionada?.importeTotalDias) }}€
+              </p>
               <p><strong>Importe Km. extra:</strong> {{ facturaSeleccionada?.importeKmExtra }}€
-                  <strong>Importe deposito:</strong> {{  facturaSeleccionada?.importePenalizacionDeposito }}€</p>      
+                <strong>Importe deposito:</strong> {{ facturaSeleccionada?.importePenalizacionDeposito }}€
+              </p>
               <p><strong>Importe total:</strong> {{ facturaSeleccionada?.importeTotal * 1.21 }}€ (IVA 21% incluido) </p>
 
             </div>
@@ -345,7 +381,7 @@ export default {
       <div class="tab-pane fade" id="ventas" role="tabpanel">
         <div v-if="ventas.length === 0" class="text-muted">No hay ventas registradas.</div>
         <div class="row" v-else>
-          <div class="col-8 mb-4 mx-auto" v-for="(venta, i) in ventas" :key="i">
+          <div class="col-8 mb-4 mx-auto" v-for="(venta, i) in ventasFiltradas" :key="i">
             <div class="card h-100 shadow-sm">
               <div class="card-body">
                 <h5 class="card-title">Venta del vehículo {{ venta.vehiculo?.matricula }} ({{ venta.vehiculo?.marca }},
@@ -411,7 +447,7 @@ export default {
     </div>
   </div>
 
-  
+
 
   <div class="modal fade" id="confirmarEliminarTransaccion" tabindex="-1"
     aria-labelledby="confirmarEliminarTransaccionLabel" aria-hidden="true">
