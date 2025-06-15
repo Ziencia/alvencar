@@ -21,7 +21,7 @@ La aplicación será diseñada para acceder a ella desde entorno web en un orden
 5. **CRUD**: Se realizará CRUD en la creación de las transacciones ([Figura 2](#figura-2)).
 6. **URLs** del proyecto:
    1. Repositorio proyecto: <https://git.institutomilitar.com/ManuelDeBlas/alvencar>
-   2. Librería: <https://github.com/ManuelDeBlas/alvencar>
+   2. Librería: <https://github.com/Ziencia/alvencar-libreria>
 7. **Despliegue** en Internet:
    1. API: https://alvencar-ac4e236c0ceb.herokuapp.com/api
    2. Web: https://alvencar.netlify.app/#/home
